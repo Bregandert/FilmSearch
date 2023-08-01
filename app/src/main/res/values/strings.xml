@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">FilmSearch</string>
+    <string name="disclaimer">Постеры предоставлены: http://www.impawards.com/</string>
+    <string name="btn_menu">Меню</string>
+    <string name="btn_favorites">Избранное</string>
+    <string name="btn_watch_later">Смотреть позже</string>
+    <string name="btn_selections">Подборки</string>
+    <string name="btn_settings">Настройки</string>
+
 </resources>
