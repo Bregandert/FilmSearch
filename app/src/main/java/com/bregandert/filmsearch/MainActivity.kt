@@ -15,27 +15,68 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-//        setContentView(R.layout.activity_main)
 
-        initButtons()
+        initNavigation()
+
+//        setContentView(R.layout.activity_main)
+//        initButtons()
+
 
     }
 
-    private fun initButtons() {
-        binding.btnMenu.setOnClickListener {
-            Toast.makeText(this, "Меню", Toast.LENGTH_SHORT).show()
+    private fun initNavigation() {
+
+        binding.topAppBar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.settings -> {
+                    Toast.makeText(this, "Настройки", Toast.LENGTH_SHORT).show()
+                    true
+                }
+
+                else -> false
+            }
         }
-        binding.btnFavorites.setOnClickListener {
-            Toast.makeText(this, "Избранное", Toast.LENGTH_SHORT).show()
-        }
-        binding.btnWatchLater.setOnClickListener {
-            Toast.makeText(this, "Посмотреть позже", Toast.LENGTH_SHORT).show()
-        }
-        binding.btnSelections.setOnClickListener {
-            Toast.makeText(this, "Подборки", Toast.LENGTH_SHORT).show()
-        }
-        binding.btnSettings.setOnClickListener {
-            Toast.makeText(this, "Настройки", Toast.LENGTH_SHORT).show()
+
+        binding.navyAppBar.setOnItemSelectedListener {
+            when (it.itemId) {
+                R.id.favorites -> {
+                    Toast.makeText(this, "Избранное", Toast.LENGTH_SHORT).show()
+                    true
+                }
+
+                R.id.watch_later -> {
+                    Toast.makeText(this, "Смотреть позже", Toast.LENGTH_SHORT).show()
+                    true
+                }
+
+                R.id.selections -> {
+                    Toast.makeText(this, "Подборки", Toast.LENGTH_SHORT).show()
+                    true
+                }
+
+                else -> false
+
+            }
+
+
         }
     }
 }
+
+//    private fun initButtons() {
+//        binding.btnMenu.setOnClickListener {
+//            Toast.makeText(this, "Меню", Toast.LENGTH_SHORT).show()
+//        }
+//        binding.btnFavorites.setOnClickListener {
+//            Toast.makeText(this, "Избранное", Toast.LENGTH_SHORT).show()
+//        }
+//        binding.btnWatchLater.setOnClickListener {
+//            Toast.makeText(this, "Посмотреть позже", Toast.LENGTH_SHORT).show()
+//        }
+//        binding.btnSelections.setOnClickListener {
+//            Toast.makeText(this, "Подборки", Toast.LENGTH_SHORT).show()
+//        }
+//        binding.btnSettings.setOnClickListener {
+//            Toast.makeText(this, "Настройки", Toast.LENGTH_SHORT).show()
+//        }
+//    }
