@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id("kotlin-parcelize")
 
 
 }
@@ -53,4 +54,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     implementation 'com.hannesdorfmann:adapterdelegates4-kotlin-dsl:4.3.0'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
+
+    implementation 'com.jakewharton.timber:timber:4.7.1'
 }

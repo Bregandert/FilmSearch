@@ -11,5 +11,9 @@
     <string name="menu_watch_later_title">Смотреть позже</string>
     <string name="menu_selections_title">Подборки</string>
     <string name="page_title">Search it!</string>
+    <string name="activity_favorites">Добавлено в избранное</string>
+    <string name="activity_watch_later">Добавлено в список "Смотреть позже"</string>
+    <string name="activity_share">Share!</string>
+
 
 </resources>
