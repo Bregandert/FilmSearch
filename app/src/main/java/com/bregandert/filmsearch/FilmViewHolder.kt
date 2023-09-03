@@ -11,23 +11,11 @@ import com.bregandert.filmsearch.databinding.FilmItemBinding
 
 
 //В конструктор класс передается layout, который мы создали(film_item.xml)
-class FilmViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+class FilmViewHolder(val binding: FilmItemBinding) : RecyclerView.ViewHolder(binding.root){
 
 
     //Привязываем View из layout к переменным
-    private val poster = itemView.findViewById<ImageView>(R.id.poster)
-    private val title = itemView.findViewById<TextView>(R.id.title)
-    private val description = itemView.findViewById<TextView>(R.id.description)
 
-    //В этом методе кладем данные из Film в наши View
-    fun bind(film: Film) {
-        //Устанавливаем заголовок
-        title.text = film.title
-        //Устанавливаем постер
-        poster.setImageResource(film.poster)
-        //Устанавливаем описание
-        description.text = film.description
-    }
 
 }
 
