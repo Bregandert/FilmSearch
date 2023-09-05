@@ -3,9 +3,11 @@ package com.bregandert.filmsearch
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.AdapterView.OnItemClickListener
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bregandert.filmsearch.databinding.FilmItemBinding
 
 //в параметр передаем слушатель, чтобы мы потом могли обрабатывать нажатия из класса Activity
 class FilmListRecyclerAdapter(private var clickListener : OnItemClickListener) :
@@ -19,20 +21,20 @@ RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
     //В этом методе мы привязываем наш ViewHolder и передаем туда "надутую" верстку нашего фильма
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return FilmViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.film_item, parent, false))
+        return FilmViewHolder(FilmItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     //В этом методе будет привязка полей из объекта Film к View из film_item.xml
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is FilmViewHolder -> {
-                //Вызываем метод bind(), который мы создали, и передаем туда объект
-                //из нашей базы данных с указанием позиции
-                holder.bind(items[position])
+                holder.binding.poster.setImageResource(items[position].poster)
+                holder.binding.title.text = items[position].title
+                holder.binding.description.text = items[position].description
                 //Обрабатываем нажатие на весь элемент целиком(можно сделать на отдельный элемент
                 //например, картинку) и вызываем метод нашего листенера, который мы получаем из
                 //конструктора адаптера
-                holder.itemView.findViewById<CardView>(R.id.item_container).setOnClickListener {
+                holder.binding.itemContainer.setOnClickListener {
                     clickListener.click(items[position])
                 }
 
@@ -62,5 +64,7 @@ RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     interface OnItemClickListener {
         fun click(film: Film)
     }
+
+
 
 }
