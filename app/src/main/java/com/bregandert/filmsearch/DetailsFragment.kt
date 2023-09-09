@@ -36,14 +36,8 @@ class DetailsFragment : Fragment() {
         binding.detailsDescription.text = film.description
 
         //Обрабатываем логику при нажатии кнопок навигации
-        binding.bottomNavy.setOnItemSelectedListener{
-
-            when (it.itemId) {
-                R.id.favorites_act -> Snackbar.make(binding.mainActivity, getString(R.string.activity_favorites), Snackbar.LENGTH_LONG).show()
-
-                R.id.watch_later_act -> Snackbar.make(binding.mainActivity, getString(R.string.activity_watch_later), Snackbar.LENGTH_LONG).show()
-            }
-            false
+        binding.detailsFab.setOnClickListener {
+            Snackbar.make(binding.root, getString(R.string.activity_share), Snackbar.LENGTH_LONG).show()
         }
     }
 }
