@@ -22,8 +22,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         initNavigation()
+        initFilmsDB()
+
 
 //        Запускаем Homefragment
         supportFragmentManager
@@ -35,6 +36,22 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+
+    private fun initFilmsDB() {
+        filmsDataBase = mutableListOf<Film>(
+            Film(1,"Elemental", R.drawable.elemental, "Elemental - fantasy animation film."),
+            Film(2, "Barbie", R.drawable.barbie, "Margo Robbi is in the comedy about the famous doll."),
+            Film(3, "Indiana Jones and the dial of destiny", R.drawable.indiana_jones_and_the_dial_of_destiny, "New part of famous franshise."),
+            Film(4, "Oppenheimer", R.drawable.oppenheimer, "Film is about creator of the atomic bomb."),
+            Film(5,"Insidious the red door", R.drawable.insidious_the_red_door, "New part of one of the scare horror."),
+            Film(6, "Mission impossible dead reckoning peart one", R.drawable.mission_impossible__dead_reckoning_part_one, "Special agent Itan Hant safe the World again."),
+            Film(7, "No hard fillings", R.drawable.no_hard_feelings, "Light comedy with beautiful Jenifer Lawrence"),
+            Film(8,"Spiderman across the spiderverse", R.drawable.spiderman_across_the_spiderverse, "Continuation of animation film"),
+            Film(9, "Transformers rise of the beasts", R.drawable.transformers_rise_of_the_beasts, "Beasts in the World of big robots")
+        )
+    }
+
+
 
     // Check back pressed. If 2 times in less than 2 sec om main screen - exit. If not main screen (fragment) - back.
     override fun onBackPressed() {
@@ -53,10 +70,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Contains constant - interval for double tap in ms
-    companion object {
-        const val TIME_INTERVAL = 2000L
-    }
-
 
     private fun initNavigation() {
 
@@ -74,7 +87,11 @@ class MainActivity : AppCompatActivity() {
         binding.navyAppBar.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.favorites -> {
-                    Toast.makeText(this, "Избранное", Toast.LENGTH_SHORT).show()
+                    supportFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.fragment_placeholder, FavoritesFragment())
+                        .addToBackStack(null)
+                        .commit()
                     true
                 }
 
@@ -98,7 +115,7 @@ class MainActivity : AppCompatActivity() {
 
     fun launchDetailsFragment(film: Film) {
         val bundle = Bundle()
-        bundle.putParcelable("film", film)
+        bundle.putParcelable(FILM, film)
         val fragment = DetailsFragment()
         fragment.arguments = bundle
 
@@ -108,6 +125,15 @@ class MainActivity : AppCompatActivity() {
             .addToBackStack(null)
             .commit()
     }
+
+    companion object {
+        const val TIME_INTERVAL = 2000L
+        const val FILM = "film"
+        var filmsDataBase = mutableListOf<Film>()
+        val favoriteFilms = mutableListOf<Film>()
+    }
+
+
 }
 
 

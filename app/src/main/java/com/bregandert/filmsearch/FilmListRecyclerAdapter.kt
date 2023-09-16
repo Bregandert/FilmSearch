@@ -28,6 +28,7 @@ RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is FilmViewHolder -> {
+                val film = items[position]
                 holder.binding.poster.setImageResource(items[position].poster)
                 holder.binding.title.text = items[position].title
                 holder.binding.description.text = items[position].description
@@ -35,7 +36,7 @@ RecyclerView.Adapter<RecyclerView.ViewHolder>(){
                 //например, картинку) и вызываем метод нашего листенера, который мы получаем из
                 //конструктора адаптера
                 holder.binding.itemContainer.setOnClickListener {
-                    clickListener.click(items[position])
+                    clickListener.click(film)
                 }
 
             }
@@ -51,12 +52,7 @@ RecyclerView.Adapter<RecyclerView.ViewHolder>(){
         items.clear()
         items.addAll(newList)
         diffResult.dispatchUpdatesTo(this)
-//        //Сначала очищаем(если не реализовать DiffUtils)
-//        items.clear()
-//        //Добавляем
-//        items.addAll(list)
-//        //Уведомляем RV, что пришел новый список, и ему нужно заново все "привязывать"
-//        notifyDataSetChanged()
+//
     }
 
 
