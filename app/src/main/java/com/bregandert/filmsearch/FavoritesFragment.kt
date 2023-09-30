@@ -10,6 +10,8 @@ import com.bregandert.filmsearch.databinding.FragmentFavoritesBinding
 import com.google.android.material.snackbar.Snackbar
 import com.bregandert.filmsearch.MainActivity.Companion.filmsDataBase
 import com.bregandert.filmsearch.MainActivity.Companion.favoriteFilms
+import com.bregandert.filmsearch.databinding.FilmItemBinding
+import java.text.ParsePosition
 
 
 class FavoritesFragment : Fragment() {
@@ -33,11 +35,11 @@ class FavoritesFragment : Fragment() {
             if (film.isFavorite) favoriteFilms.add(film)
 
         }
-        filmsAdapter = FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
-            override fun click(film : Film) {
-                (requireActivity() as MainActivity).launchDetailsFragment(film)
-            }
-        })
+//        filmsAdapter = FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
+//            override fun click(film : Film, position: Int, binding: FilmItemBinding) {
+//                (requireActivity() as MainActivity).launchDetailsFragment(film, position, binding)
+//            }
+//        })
         filmsAdapter.addItems(favoriteFilms)
         binding.favoritesRecycler.adapter = filmsAdapter
         val decorator =TopSpacingItemDecoration(8)

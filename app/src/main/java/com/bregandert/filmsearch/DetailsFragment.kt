@@ -48,6 +48,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun setFavoriteIcon() {
+
         // changing 'add to favorites' fab icon depending on status
         binding.favoritesFab.setImageResource(
             if (film.isFavorite) R.drawable.ic_favorite

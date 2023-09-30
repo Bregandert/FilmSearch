@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bregandert.filmsearch.databinding.ActivityMainBinding
+import com.bregandert.filmsearch.databinding.FilmItemBinding
 import java.text.ParsePosition
 
 //import kotlinx.android.synthetic.main.activity_main.*
@@ -32,8 +33,6 @@ class MainActivity : AppCompatActivity() {
             .add(R.id.fragment_placeholder, HomeFragment())
             .addToBackStack(null)
             .commit()
-
-
 
     }
 
@@ -94,28 +93,23 @@ class MainActivity : AppCompatActivity() {
                         .commit()
                     true
                 }
-
                 R.id.watch_later -> {
                     Toast.makeText(this, "Смотреть позже", Toast.LENGTH_SHORT).show()
                     true
                 }
-
                 R.id.selections -> {
                     Toast.makeText(this, "Подборки", Toast.LENGTH_SHORT).show()
                     true
                 }
-
                 else -> false
-
             }
-
-
         }
     }
 
-    fun launchDetailsFragment(film: Film) {
+    fun launchDetailsFragment(film: Film, position: Int, filmItemBinding: FilmItemBinding) {
         val bundle = Bundle()
         bundle.putParcelable(FILM, film)
+        bundle.putInt(POSITION, position)
         val fragment = DetailsFragment()
         fragment.arguments = bundle
 
@@ -129,6 +123,8 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val TIME_INTERVAL = 2000L
         const val FILM = "film"
+        const val POSITION = "position"
+        const val TRANSITION_NAME = "transition"
         var filmsDataBase = mutableListOf<Film>()
         val favoriteFilms = mutableListOf<Film>()
     }
