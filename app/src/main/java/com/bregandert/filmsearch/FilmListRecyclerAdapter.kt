@@ -1,6 +1,8 @@
 package com.bregandert.filmsearch
 
+import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.Toast
@@ -8,63 +10,82 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bregandert.filmsearch.databinding.FilmItemBinding
+import com.bumptech.glide.Glide
 
 //в параметр передаем слушатель, чтобы мы потом могли обрабатывать нажатия из класса Activity
-class FilmListRecyclerAdapter(private var clickListener : OnItemClickListener) :
-RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+class FilmListRecyclerAdapter(val context: Context, films: MutableList<Film>) :
+RecyclerView.Adapter<FilmListRecyclerAdapter.FilmViewHolder>(){
 
     //Здесь у нас хранится список элементов для RV
-    private val items = mutableListOf<Film>()
+    val films = mutableListOf<Film>()
 
     //Этот метод нужно переопределить на возврат количества элементов в списке RV
-    override fun getItemCount() = items.size
+    override fun getItemCount() = films.size
 
     //В этом методе мы привязываем наш ViewHolder и передаем туда "надутую" верстку нашего фильма
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return FilmViewHolder(FilmItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilmViewHolder {
+//        return FilmViewHolder(FilmItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return FilmViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.film_item, parent, false))
     }
 
-    //В этом методе будет привязка полей из объекта Film к View из film_item.xml
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+//    override fun onBindViewHolder(holder: FilmViewHolder, position: Int) {
+//        TODO("Not yet implemented")
+//    }
+
+    //инициализируем данные из холдера для каждого фильма
+    override fun onBindViewHolder(holder: FilmViewHolder, position: Int) {
         when (holder) {
             is FilmViewHolder -> {
-                holder.binding.poster.setImageResource(items[position].poster)
-                holder.binding.title.text = items[position].title
-                holder.binding.description.text = items[position].description
-                //Обрабатываем нажатие на весь элемент целиком(можно сделать на отдельный элемент
-                //например, картинку) и вызываем метод нашего листенера, который мы получаем из
-                //конструктора адаптера
-                holder.binding.itemContainer.setOnClickListener {
-                    clickListener.click(items[position])
-                }
+                val film = films[position]
+//                holder.bindData(film, clickListener, position)
 
             }
         }
     }
 
-    //Метод для добавления объектов в наш список
+    //Инициализируем базу данных адаптера с данным списком фильмов. Используем DiffUtils дл изменений
     fun addItems(newList: MutableList<Film>) {
 
 
-        val numbersDiff = FilmDiff(items, newList)
+        val numbersDiff = FilmDiff(films, newList)
         val diffResult = DiffUtil.calculateDiff(numbersDiff)
-        items.clear()
-        items.addAll(newList)
+        films.clear()
+        films.addAll(newList)
         diffResult.dispatchUpdatesTo(this)
-//        //Сначала очищаем(если не реализовать DiffUtils)
-//        items.clear()
-//        //Добавляем
-//        items.addAll(list)
-//        //Уведомляем RV, что пришел новый список, и ему нужно заново все "привязывать"
-//        notifyDataSetChanged()
+//
     }
 
 
     //Интерфейс для обработки кликов
     interface OnItemClickListener {
-        fun click(film: Film)
+        fun click(film: Film, position: Int, binding: FilmItemBinding)
     }
 
+    inner class FilmViewHolder(val itemFilm: View) : RecyclerView.ViewHolder(itemFilm){
+
+        private lateinit var binding : FilmItemBinding
+
+        fun bindData(film: Film, clickListener: FilmListRecyclerAdapter.OnItemClickListener, position: Int) {
 
 
+
+//      Используем Glide для постеров
+//        Glide.with(binding.root)  //контейнер, наш список фильмов
+//            .load(film.poster) //картинка для постера которую загружаем
+//            .centerCrop()
+//            .into(binding.poster) // закидываем эту картинку FilmItemBinding
+//
+//        binding.poster.transitionName = MainActivity.TRANSITION_NAME + position
+
+            binding.poster.setImageResource(film.poster)
+
+            binding.title.text = film.title
+            binding.description.text = film.description
+            binding.root.setOnClickListener {
+                clickListener.click(film, position, binding)
+            }
+            bindingAdapterPosition
+
+        }
+    }
 }
