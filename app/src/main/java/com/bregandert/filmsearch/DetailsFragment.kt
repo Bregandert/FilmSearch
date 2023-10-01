@@ -8,6 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bregandert.filmsearch.MainActivity.Companion.FILM
+import com.bregandert.filmsearch.MainActivity.Companion.TRANSITION_NAME
+import com.bregandert.filmsearch.MainActivity.Companion.POSITION
+import com.bregandert.filmsearch.MainActivity.Companion.POSTER
+import com.bregandert.filmsearch.MainActivity.Companion.DESCRIPTION
 import com.bregandert.filmsearch.databinding.FragmentDetailsBinding
 import com.google.android.material.snackbar.Snackbar
 
@@ -19,9 +23,10 @@ class DetailsFragment : Fragment() {
 
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentDetailsBinding.inflate(layoutInflater)
 
         film = (
