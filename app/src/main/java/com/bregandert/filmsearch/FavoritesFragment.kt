@@ -5,13 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.bregandert.filmsearch.databinding.FragmentDetailsBinding
+
 import com.bregandert.filmsearch.databinding.FragmentFavoritesBinding
-import com.google.android.material.snackbar.Snackbar
+import com.bregandert.filmsearch.databinding.FilmItemBinding
 import com.bregandert.filmsearch.MainActivity.Companion.filmsDataBase
 import com.bregandert.filmsearch.MainActivity.Companion.favoriteFilms
-import com.bregandert.filmsearch.databinding.FilmItemBinding
-import java.text.ParsePosition
 
 
 class FavoritesFragment : Fragment() {
@@ -23,9 +21,10 @@ class FavoritesFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentFavoritesBinding.inflate(layoutInflater)
         initFavorites()
+        AnimationHelper.performFragmentCircularRevealAnimation(binding.root, requireActivity(), 1)
         return binding.root
     }
 
@@ -35,11 +34,11 @@ class FavoritesFragment : Fragment() {
             if (film.isFavorite) favoriteFilms.add(film)
 
         }
-//        filmsAdapter = FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
-//            override fun click(film : Film, position: Int, binding: FilmItemBinding) {
-//                (requireActivity() as MainActivity).launchDetailsFragment(film, position, binding)
-//            }
-//        })
+        filmsAdapter = FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
+            override fun click(film : Film, position: Int, binding: FilmItemBinding) {
+                (requireActivity() as MainActivity).launchDetailsFragment(film, position, binding)
+            }
+        })
         filmsAdapter.addItems(favoriteFilms)
         binding.favoritesRecycler.adapter = filmsAdapter
         val decorator =TopSpacingItemDecoration(8)
