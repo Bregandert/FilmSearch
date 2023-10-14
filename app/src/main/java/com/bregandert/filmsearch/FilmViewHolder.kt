@@ -28,6 +28,8 @@ class FilmViewHolder(val binding: FilmItemBinding) : RecyclerView.ViewHolder(bin
 
         binding.title.text = film.title
         binding.description.text = film.description
+        //Устанавливаем рейтинг
+        binding.ratingDonut.setProgress((film.rating * 10).toInt())
         binding.root.setOnClickListener {
             clickListener.click(film, position, binding)
         }
