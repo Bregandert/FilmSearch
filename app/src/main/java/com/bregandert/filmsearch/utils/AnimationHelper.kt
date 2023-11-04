@@ -1,4 +1,4 @@
-package com.bregandert.filmsearch
+package com.bregandert.filmsearch.utils
 
 import android.app.Activity
 import android.view.View

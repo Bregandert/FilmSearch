@@ -1,4 +1,4 @@
-package com.bregandert.filmsearch
+package com.bregandert.filmsearch.domain
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

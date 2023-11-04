@@ -1,4 +1,4 @@
-package com.bregandert.filmsearch
+package com.bregandert.filmsearch.view.fragments
 
 import android.content.Intent
 import android.os.Build
@@ -7,13 +7,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.bregandert.filmsearch.MainActivity.Companion.FILM
-import com.bregandert.filmsearch.MainActivity.Companion.TRANSITION_NAME
-import com.bregandert.filmsearch.MainActivity.Companion.POSITION
-import com.bregandert.filmsearch.MainActivity.Companion.POSTER
-import com.bregandert.filmsearch.MainActivity.Companion.DESCRIPTION
+import com.bregandert.filmsearch.App
+import com.bregandert.filmsearch.R
 import com.bregandert.filmsearch.databinding.FragmentDetailsBinding
-import com.google.android.material.snackbar.Snackbar
+import com.bregandert.filmsearch.domain.Film
 
 
 class DetailsFragment : Fragment() {
@@ -31,9 +28,9 @@ class DetailsFragment : Fragment() {
 
         film = (
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    arguments?.getParcelable(FILM, Film::class.java)
+                    arguments?.getParcelable(App.Companion.instance.FILM, Film::class.java)
                 } else {
-                    arguments?.getParcelable(FILM) as Film?
+                    arguments?.getParcelable(App.instance.FILM) as Film?
                 }
                 ) ?: return binding.root
 

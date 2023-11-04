@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="150dp">
 
-    <com.bregandert.filmsearch.RatingDonutView
+    <com.bregandert.filmsearch.view.customviews.RatingDonutView
         android:id="@+id/rating_donut"
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -22,7 +22,7 @@
         app:layout_constraintRight_toRightOf="parent"/>
 
 <androidx.cardview.widget.CardView
-    android:id="@+id/item_container"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="10dp"
@@ -30,6 +30,7 @@
     app:cardCornerRadius="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/item_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

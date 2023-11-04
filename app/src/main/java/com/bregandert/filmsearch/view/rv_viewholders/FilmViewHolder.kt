@@ -1,9 +1,14 @@
-package com.bregandert.filmsearch
+package com.bregandert.filmsearch.view.rv_viewholders
 
 
+import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import com.bregandert.filmsearch.App
+import com.bregandert.filmsearch.view.MainActivity
 
 import com.bregandert.filmsearch.databinding.FilmItemBinding
+import com.bregandert.filmsearch.domain.Film
+import com.bregandert.filmsearch.view.rv_adapters.FilmListRecyclerAdapter
 import com.bumptech.glide.Glide
 
 
@@ -12,9 +17,7 @@ import com.bumptech.glide.Glide
 class FilmViewHolder(val binding: FilmItemBinding) : RecyclerView.ViewHolder(binding.root){
 
 
-    fun bindData(film: Film, clickListener: FilmListRecyclerAdapter.OnItemClickListener, position: Int) {
-
-
+    fun bindData(film: Film, clickListener:FilmListRecyclerAdapter.OnItemClickListener, position: Int) {
 
 //      Используем Glide для постеров
         Glide.with(binding.root)  //контейнер, наш список фильмов
@@ -22,19 +25,16 @@ class FilmViewHolder(val binding: FilmItemBinding) : RecyclerView.ViewHolder(bin
             .centerCrop()
             .into(binding.poster) // закидываем эту картинку FilmItemBinding
 
-        binding.poster.transitionName = MainActivity.TRANSITION_NAME + position
-
-//        binding.poster.setImageResource(film.poster)
+        binding.poster.transitionName = App.instance.TRANSITION_NAME + position
 
         binding.title.text = film.title
         binding.description.text = film.description
-        //Устанавливаем рейтинг
-        binding.ratingDonut.setProgress((film.rating * 10).toInt())
         binding.root.setOnClickListener {
             clickListener.click(film, position, binding)
         }
-//        adapterPosition
-          bindingAdapterPosition
+        //Устанавливаем рейтинг
+        binding.ratingDonut.setProgress((film.rating * 10).toInt())
+        bindingAdapterPosition
     }
 
 
