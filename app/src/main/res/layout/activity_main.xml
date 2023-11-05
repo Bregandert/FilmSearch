@@ -5,8 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
-    tools:context="com.bregandert.filmsearch.MainActivity">
+    android:background="@drawable/background_home"
+    tools:context="com.bregandert.filmsearch.view.MainActivity">
 
 
     <com.google.android.material.appbar.AppBarLayout
@@ -50,8 +50,6 @@
             style="@style/Widget.MaterialComponents.Toolbar.Primary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
-
             app:itemIconTint="@color/white"
             app:itemTextColor="@color/white"
             app:labelVisibilityMode="labeled"

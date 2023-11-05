@@ -1,10 +1,11 @@
-package com.bregandert.filmsearch
+package com.bregandert.filmsearch.view.rv_adapters
 
 
 import androidx.recyclerview.widget.DiffUtil
+import com.bregandert.filmsearch.domain.Film
 
 
-class FilmDiff( val oldList: MutableList<Film>, val newList: MutableList<Film>) : DiffUtil.Callback() {
+class FilmDiff(val oldList: List<Film>, val newList: List<Film>) : DiffUtil.Callback() {
     override fun getOldListSize(): Int {
         return oldList.size
     }
