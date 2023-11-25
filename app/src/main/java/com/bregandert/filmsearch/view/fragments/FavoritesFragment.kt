@@ -53,6 +53,7 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun initFavorites(){
+
         filmsAdapter = FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
             override fun click(film : Film, position: Int, binding: FilmItemBinding) {
                 (requireActivity() as MainActivity).launchDetailsFragment(film, position, binding)

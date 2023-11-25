@@ -4,7 +4,8 @@ package com.bregandert.filmsearch.view.rv_viewholders
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bregandert.filmsearch.App
-import com.bregandert.filmsearch.view.MainActivity
+import com.bregandert.filmsearch.data.ApiConstants
+
 
 import com.bregandert.filmsearch.databinding.FilmItemBinding
 import com.bregandert.filmsearch.domain.Film
@@ -21,7 +22,7 @@ class FilmViewHolder(val binding: FilmItemBinding) : RecyclerView.ViewHolder(bin
 
 //      Используем Glide для постеров
         Glide.with(binding.root)  //контейнер, наш список фильмов
-            .load(film.poster) //картинка для постера которую загружаем
+            .load(ApiConstants.IMAGES_URL + "w342" + film.poster) //картинка для постера которую загружаем
             .centerCrop()
             .into(binding.poster) // закидываем эту картинку FilmItemBinding
 

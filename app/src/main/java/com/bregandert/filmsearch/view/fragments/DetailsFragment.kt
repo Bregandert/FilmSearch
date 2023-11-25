@@ -9,8 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import com.bregandert.filmsearch.App
 import com.bregandert.filmsearch.R
+import com.bregandert.filmsearch.data.ApiConstants
 import com.bregandert.filmsearch.databinding.FragmentDetailsBinding
 import com.bregandert.filmsearch.domain.Film
+import com.bumptech.glide.Glide
 
 
 class DetailsFragment : Fragment() {
@@ -34,6 +36,8 @@ class DetailsFragment : Fragment() {
                 }
                 ) ?: return binding.root
 
+
+
         initDetails()
         setFavoriteIcon()
         setShareIcon()
@@ -44,7 +48,11 @@ class DetailsFragment : Fragment() {
         //Устанавливаем заголовок
         binding.detailsToolbar.title = film.title
         //Устанавливаем постер
-        binding.detailsPoster.setImageResource(film.poster)
+        Glide.with(this)
+            .load(ApiConstants.IMAGES_URL + "w780" + film.poster)
+            .centerCrop()
+            .into(binding.detailsPoster)
+//        binding.detailsPoster.setImageResource(film.poster)
         //Устанавливаем описание
         binding.detailsDescription.text = film.description
     }
