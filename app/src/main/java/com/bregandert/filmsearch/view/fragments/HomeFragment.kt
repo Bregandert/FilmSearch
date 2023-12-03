@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.bregandert.filmsearch.view.rv_adapters.FilmListRecyclerAdapter
 import com.bregandert.filmsearch.view.MainActivity
 import com.bregandert.filmsearch.view.rv_adapters.TopSpacingItemDecoration
@@ -20,7 +19,6 @@ import com.bregandert.filmsearch.databinding.FilmItemBinding
 import com.bregandert.filmsearch.domain.Film
 import com.bregandert.filmsearch.utils.AnimationHelper
 import com.bregandert.filmsearch.viewmodel.HomeFragmentViewModel
-
 
 class HomeFragment : Fragment() {
 

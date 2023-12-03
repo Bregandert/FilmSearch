@@ -12,8 +12,13 @@ class FavoriteFragmentViewModel: ViewModel() {
     private var interactor: Interactor = App.instance.interactor
 
     init {
-        val films = interactor.getFilmsDB()
-        filmsListLiveData.postValue(films)
+        interactor.getFilmsFromApi(1, object : HomeFragmentViewModel.ApiCallback {
+            override fun onSuccess(films: List<Film>) {
+                filmsListLiveData.postValue(films)
+            }
+            override fun onFailure() {
+            }
+        })
     }
 
 }

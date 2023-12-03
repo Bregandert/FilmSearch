@@ -8,13 +8,26 @@ import com.bregandert.filmsearch.domain.Interactor
 
 class HomeFragmentViewModel: ViewModel() {
     val filmsListLiveData = MutableLiveData<List<Film>>()
-
-    //Инициализируем интерактор
     private var interactor: Interactor = App.instance.interactor
-
+    private var page = 0
     init {
-        val films = interactor.getFilmsDB()
-        filmsListLiveData.postValue(films)
+        addNextPage()
+    }
+
+    interface ApiCallback {
+        fun onSuccess(films: List<Film>)
+        fun onFailure()
+    }
+
+    fun addNextPage() {
+        interactor.getFilmsFromApi(++page, object : ApiCallback {
+            override fun onSuccess(films: List<Film>) {
+                filmsListLiveData.value = filmsListLiveData.value?.plus(films) ?: films
+            }
+            override fun onFailure() {
+                page--
+            }
+        })
     }
 
 }
