@@ -5,13 +5,18 @@ import androidx.lifecycle.ViewModel
 import com.bregandert.filmsearch.App
 import com.bregandert.filmsearch.domain.Film
 import com.bregandert.filmsearch.domain.Interactor
+import javax.inject.Inject
 
 class FavoriteFragmentViewModel: ViewModel() {
 
     val filmsListLiveData = MutableLiveData<List<Film>>()
-    private var interactor: Interactor = App.instance.interactor
+
+    @Inject
+    lateinit var interactor: Interactor
 
     init {
+
+        App.instance.dagger.inject(this)
         interactor.getFilmsFromApi(1, object : HomeFragmentViewModel.ApiCallback {
             override fun onSuccess(films: List<Film>) {
                 filmsListLiveData.postValue(films)
