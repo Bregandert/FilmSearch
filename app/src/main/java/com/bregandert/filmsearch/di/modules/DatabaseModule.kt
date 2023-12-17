@@ -1,23 +1,24 @@
 package com.bregandert.filmsearch.di.modules
 
+import android.content.Context
 import com.bregandert.filmsearch.data.MainRepository
-import dagger.Binds
+import com.bregandert.filmsearch.data.db.DatabaseHelper
 import dagger.Module
 import dagger.Provides
-import javax.inject.Inject
 import javax.inject.Singleton
 
 @Module
 class DatabaseModule {
+
+    @Singleton
+    @Provides
+    fun provideDatabaseHelper(context: Context) = DatabaseHelper(context)
+
     @Provides
     @Singleton
-    fun provideRepository() = MainRepository()
-//    @Binds
-//    @Singleton
-//    abstract fun getRepository(repository: MainRepository) : FilmRepositoryInterface
+    fun provideRepository(databaseHelper: DatabaseHelper) = MainRepository(databaseHelper)
+
 
 
 }
 
-//interface FilmRepositoryInterface
-//class MainRepository @Inject constructor() : FilmRepositoryInterface

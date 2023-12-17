@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bregandert.filmsearch.view.rv_adapters.FilmListRecyclerAdapter
 import com.bregandert.filmsearch.view.MainActivity
 import com.bregandert.filmsearch.view.rv_adapters.TopSpacingItemDecoration
@@ -41,10 +42,10 @@ class HomeFragment : Fragment() {
             filmsAdapter.addItems(field)
         }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        retainInstance = true
-    }
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        retainInstance = true
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,11 +60,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        AnimationHelper.performFragmentCircularRevealAnimation(
-            homeBinding.homeFragmentRoot,
-            requireActivity(),
-            0
-        )
+        readFilmsDBFromViewModel()
 
         //Поиск не при нажатии на иконку, а на все поле поиска
         homeBinding.searchView.setOnClickListener {
@@ -78,7 +75,19 @@ class HomeFragment : Fragment() {
             filmsDataBase = it
         })
 
+        AnimationHelper.performFragmentCircularRevealAnimation(
+            homeBinding.homeFragmentRoot,
+            requireActivity(),
+            0
+        )
 
+
+    }
+
+    private fun readFilmsDBFromViewModel() {
+        viewModel.filmsListLiveData.observe(viewLifecycleOwner, Observer<List<Film>> {
+            filmsDataBase = it
+        })
     }
 
     private fun initSearchView() {
@@ -115,12 +124,17 @@ class HomeFragment : Fragment() {
     //находим наш RV
     private fun initHomeFragment() {
 
-        filmsAdapter = FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
-//            если кликнули кликунли фильм то запускаем фрагимент с этим фильмом
-            override fun click(film: Film, position: Int, binding: FilmItemBinding) {
-                (requireActivity() as MainActivity).launchDetailsFragment(film, position, binding)
-            }
-        })
+        filmsAdapter =
+            FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
+                //            если кликнули кликунли фильм то запускаем фрагимент с этим фильмом
+                override fun click(film: Film, position: Int, binding: FilmItemBinding) {
+                    (requireActivity() as MainActivity).launchDetailsFragment(
+                        film,
+                        position,
+                        binding
+                    )
+                }
+            })
 
 //        добавляем все фильмы в ресайклер вью адаптер
         filmsAdapter.addItems(filmsDataBase)
@@ -131,7 +145,13 @@ class HomeFragment : Fragment() {
         homeBinding.mainRecycler.addItemDecoration(decorator)
 
 //        Скрываем/показываем поисковую панель в зависимости от направления скрола
-        homeBinding.mainRecycler.addOnScrollListener(object : OnScrollListener() {
+//        Загружаем новые данные когда мы в конце листа
+        val scrollListener = object : OnScrollListener() {
+
+            private val layoutManager: LinearLayoutManager =
+                homeBinding.mainRecycler.layoutManager as LinearLayoutManager
+            var isLoading = false
+
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy < 0) {
@@ -139,9 +159,32 @@ class HomeFragment : Fragment() {
                 } else if (dy > 0) {
                     homeBinding.searchView.visibility = View.VISIBLE
                 }
-            }
-        })
+                val visibleItemCount: Int = layoutManager.childCount
+                val totalItemCount: Int = layoutManager.itemCount
+                val firstVisibleItems = layoutManager.findFirstVisibleItemPosition()
 
+                if (!isLoading) {
+                    if (visibleItemCount + firstVisibleItems >= totalItemCount - 3) {
+                        isLoading = true
+                        viewModel.addNextPage()
+                        isLoading = false
+                    }
+                }
+
+            }
+        }
+
+        homeBinding.mainRecycler.addOnScrollListener(scrollListener)
 
     }
+
+    private fun initPullToRefresh() {
+        homeBinding.pullToRefresh.setOnRefreshListener {
+            viewModel.loadFirstPage()
+            readFilmsDBFromViewModel()
+            filmsAdapter.addItems(filmsDataBase)
+            homeBinding.pullToRefresh.isRefreshing = false
+        }
+    }
 }
+
