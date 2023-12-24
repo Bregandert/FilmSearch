@@ -17,9 +17,16 @@ class Interactor(private val repo: MainRepository, private val retrofitService: 
     //и страницу, которую нужно загрузить (это для пагинации)
     fun getFilmsFromApi(page: Int, callback: HomeFragmentViewModel.ApiCallback) {
         retrofitService.getFilms(APIKey.KEY, "ru-RU", page).enqueue(object : Callback<TmdbResults> {
+
+
             override fun onResponse(call: Call<TmdbResults>, response: Response<TmdbResults>) {
                 //При успехе мы вызываем метод передаем onSuccess и в этот коллбэк список фильмов
-                callback.onSuccess(Converter.convertApiListToDtoList(response.body()?.tmdbFilms))
+                val list = Converter.convertApiListToDtoList(response.body()?.tmdbFilms)
+//                кладем фильмы в бд
+                list.forEach {
+                    repo.putToDb(film = it)
+                }
+                callback.onSuccess(list)
             }
 
             override fun onFailure(call: Call<TmdbResults>, t: Throwable) {
@@ -28,4 +35,6 @@ class Interactor(private val repo: MainRepository, private val retrofitService: 
             }
         })
     }
+
+    fun getFilmsFromDB(): List<Film> = repo.getAllFromDB()
 }

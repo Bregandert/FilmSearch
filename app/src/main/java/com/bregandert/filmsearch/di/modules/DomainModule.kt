@@ -1,5 +1,6 @@
 package com.bregandert.filmsearch.di.modules
 
+import android.content.Context
 import com.bregandert.filmsearch.data.MainRepository
 import com.bregandert.filmsearch.data.TmdbApi
 import com.bregandert.filmsearch.domain.Interactor
@@ -9,14 +10,15 @@ import dagger.Provides
 import javax.inject.Singleton
 
 @Module
-class DomainModule {
+class DomainModule(val context: Context) {
+
+        @Provides
+        fun provideContext() = context
+
         @Provides
         @Singleton
         fun provideInteractor(repository: MainRepository, tmdbApi: TmdbApi) =
         Interactor(repo = repository, retrofitService = tmdbApi)
-//    @Singleton
-//    @Binds
-//    abstract fun getInteractor(interactor: Interactor): InteractorInterface
+
 }
 
-//interface InteractorInterface

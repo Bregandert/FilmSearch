@@ -15,7 +15,7 @@ class HomeFragmentViewModel: ViewModel() {
     private var page = 0
     init {
         App.instance.dagger.inject(this)
-        addNextPage()
+        loadFirstPage()
     }
 
     interface ApiCallback {
@@ -29,9 +29,16 @@ class HomeFragmentViewModel: ViewModel() {
                 filmsListLiveData.value = filmsListLiveData.value?.plus(films) ?: films
             }
             override fun onFailure() {
+                filmsListLiveData.postValue(interactor.getFilmsFromDB())
                 page--
             }
         })
+    }
+
+    fun loadFirstPage() {
+        filmsListLiveData.value = emptyList()
+        page = 0
+        addNextPage()
     }
 
 }

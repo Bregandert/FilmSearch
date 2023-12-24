@@ -3,6 +3,9 @@ package com.bregandert.filmsearch
 import android.app.Application
 import com.bregandert.filmsearch.di.AppComponent
 import com.bregandert.filmsearch.di.DaggerAppComponent
+import com.bregandert.filmsearch.di.modules.DatabaseModule
+import com.bregandert.filmsearch.di.modules.DomainModule
+import com.bregandert.filmsearch.di.modules.RemoteModule
 
 
 class App : Application() {
@@ -21,7 +24,11 @@ class App : Application() {
         //Инициализируем экземпляр App, через который будем получать доступ к остальным переменным
         instance = this
         //Создаем компонент
-        dagger = DaggerAppComponent.create()
+        dagger = DaggerAppComponent.builder()
+            .remoteModule(RemoteModule())
+            .databaseModule(DatabaseModule())
+            .domainModule(DomainModule(this))
+            .build()
 
 
     }
