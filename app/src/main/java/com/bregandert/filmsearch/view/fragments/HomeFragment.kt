@@ -6,18 +6,20 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.bregandert.filmsearch.databinding.FragmentHomeBinding
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bregandert.filmsearch.R
 import com.bregandert.filmsearch.view.rv_adapters.FilmListRecyclerAdapter
 import com.bregandert.filmsearch.view.MainActivity
 import com.bregandert.filmsearch.view.rv_adapters.TopSpacingItemDecoration
 import com.bregandert.filmsearch.databinding.FilmItemBinding
-import com.bregandert.filmsearch.domain.Film
+import com.bregandert.filmsearch.data.entity.Film
 import com.bregandert.filmsearch.utils.AnimationHelper
 import com.bregandert.filmsearch.viewmodel.HomeFragmentViewModel
 
@@ -26,9 +28,7 @@ class HomeFragment : Fragment() {
     private lateinit var homeBinding: FragmentHomeBinding
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
 
-    private val viewModel by lazy {
-        ViewModelProvider.NewInstanceFactory().create(HomeFragmentViewModel::class.java)
-    }
+    private val viewModel: HomeFragmentViewModel by activityViewModels()
 
     //    Создадим переменную, куда будем класть нашу БД из ViewModel, чтобы у нас не сломался поиск
     private var filmsDataBase = listOf<Film>()
@@ -41,11 +41,6 @@ class HomeFragment : Fragment() {
             //Обновляем RV адаптер
             filmsAdapter.addItems(field)
         }
-
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        retainInstance = true
-//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -70,10 +65,10 @@ class HomeFragment : Fragment() {
         initSearchView()
 //        находим наш RV
         initHomeFragment()
-//        подпишемся на изменения этой View Model
-        viewModel.filmsListLiveData.observe(viewLifecycleOwner, Observer<List<Film>> {
-            filmsDataBase = it
-        })
+
+        initPullToRefresh()
+        refreshFragment()
+
 
         AnimationHelper.performFragmentCircularRevealAnimation(
             homeBinding.homeFragmentRoot,
@@ -85,9 +80,19 @@ class HomeFragment : Fragment() {
     }
 
     private fun readFilmsDBFromViewModel() {
-        viewModel.filmsListLiveData.observe(viewLifecycleOwner, Observer<List<Film>> {
+        viewModel.filmsListLiveData.observe(viewLifecycleOwner) {
             filmsDataBase = it
-        })
+        }
+
+        viewModel.showProgressBar.observe(viewLifecycleOwner) {
+            homeBinding.progressBar.isVisible = it
+        }
+
+        viewModel.apiErrorEvent.observe(viewLifecycleOwner) {
+            Toast.makeText(homeBinding.root.context, it + ":" + getString(R.string.api_error_message), Toast.LENGTH_LONG).show()
+        }
+
+
     }
 
     private fun initSearchView() {
@@ -126,7 +131,7 @@ class HomeFragment : Fragment() {
 
         filmsAdapter =
             FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
-                //            если кликнули кликунли фильм то запускаем фрагимент с этим фильмом
+                //            если кликнули фильм то запускаем фрагмент с этим фильмом
                 override fun click(film: Film, position: Int, binding: FilmItemBinding) {
                     (requireActivity() as MainActivity).launchDetailsFragment(
                         film,
@@ -180,11 +185,15 @@ class HomeFragment : Fragment() {
 
     private fun initPullToRefresh() {
         homeBinding.pullToRefresh.setOnRefreshListener {
-            viewModel.loadFirstPage()
-            readFilmsDBFromViewModel()
-            filmsAdapter.addItems(filmsDataBase)
+            refreshFragment()
             homeBinding.pullToRefresh.isRefreshing = false
         }
+    }
+
+    private fun refreshFragment() {
+        viewModel.loadFirstPage()
+        readFilmsDBFromViewModel()
+        filmsAdapter.addItems(filmsDataBase)
     }
 }
 
