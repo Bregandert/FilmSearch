@@ -1,14 +1,13 @@
 package com.bregandert.filmsearch.view.rv_viewholders
 
 
-import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bregandert.filmsearch.App
 import com.bregandert.filmsearch.data.ApiConstants
 
 
 import com.bregandert.filmsearch.databinding.FilmItemBinding
-import com.bregandert.filmsearch.domain.Film
+import com.bregandert.filmsearch.data.entity.Film
 import com.bregandert.filmsearch.view.rv_adapters.FilmListRecyclerAdapter
 import com.bumptech.glide.Glide
 

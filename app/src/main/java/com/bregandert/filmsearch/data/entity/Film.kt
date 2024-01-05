@@ -1,15 +1,21 @@
-package com.bregandert.filmsearch.domain
+package com.bregandert.filmsearch.data.entity
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
+@Entity(tableName = "cashed_films", indices = [Index(value = ["title"], unique = true)])
 data class Film(
 
-    val title: String,
-    val poster: String,
-    val description: String,
-    var rating: Double = 0.0,
+    @PrimaryKey(autoGenerate = true) val id: Int =0,
+    @ColumnInfo(name = "title") val title: String,
+    @ColumnInfo(name = "poster_path") val poster: String,
+    @ColumnInfo(name = "overview") val description: String,
+    @ColumnInfo(name = "vote_average") var rating: Double = 0.0,
     var isFavorite: Boolean = false
 ) : Parcelable {
 

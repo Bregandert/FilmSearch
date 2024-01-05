@@ -9,7 +9,7 @@ import com.bregandert.filmsearch.App
 import com.bregandert.filmsearch.R
 import com.bregandert.filmsearch.databinding.ActivityMainBinding
 import com.bregandert.filmsearch.databinding.FilmItemBinding
-import com.bregandert.filmsearch.domain.Film
+import com.bregandert.filmsearch.data.entity.Film
 import com.bregandert.filmsearch.view.fragments.DetailsFragment
 import com.bregandert.filmsearch.view.fragments.FavoritesFragment
 import com.bregandert.filmsearch.view.fragments.HomeFragment
@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
@@ -39,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager
             .beginTransaction()
             .add(R.id.fragment_placeholder, HomeFragment())
-            .addToBackStack(App.Companion.instance.FRAGMENT_TAG)
+            .addToBackStack(App.instance.FRAGMENT_TAG)
             .commit()
 
     }
@@ -50,8 +51,9 @@ class MainActivity : AppCompatActivity() {
 
     // Check back pressed. If 2 times in less than 2 sec om main screen - exit. If not main screen (fragment) - back.
     override fun onBackPressed() {
+        super.onBackPressed()
         if (supportFragmentManager.backStackEntryCount <= 1) {
-            if (backPressed + App.instance.TIME_INTERVAL > System.currentTimeMillis()) {
+            if (backPressed + App.instance.BACK_CLICK_TIME_INTERVAL > System.currentTimeMillis()) {
                 onBackPressedDispatcher.onBackPressed()
                 finish()
             } else {
@@ -85,7 +87,7 @@ class MainActivity : AppCompatActivity() {
                     val tag = "home"
                     val fragment = checkFragmentExistence(tag)
                     //В первом параметре, если фрагмент не найден и метод вернул null, то с помощью
-                    //элвиса мы вызываем создание нвого фрагмента
+                    //элвиса мы вызываем создание нового фрагмента
                     changeFragment(fragment?: HomeFragment(), tag)
                     true
                 }
@@ -96,7 +98,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.watch_later -> {
-                    val tag = "watch_later"
+                    val tag = "settings"
                     val fragment = checkFragmentExistence(tag)
                     changeFragment(fragment?: WatchLaterFragment(), tag)
                     true
