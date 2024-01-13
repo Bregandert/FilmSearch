@@ -22,9 +22,9 @@
             android:layout_height="?actionBarSize"
             app:menu="@menu/top_app_bar"
             app:navigationIcon="@drawable/round_menu"
-            app:title="@string/page_title">
+            app:title="@string/page_title"/>
 
-        </com.google.android.material.appbar.MaterialToolbar>
+
 
 
 
@@ -39,26 +39,23 @@
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation"/>
 
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent">
+
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/navyAppBar"
-            style="@style/Widget.MaterialComponents.Toolbar.Primary"
+            android:id="@+id/bottom_navigation"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/cardview_dark_background"
             app:itemIconTint="@color/white"
             app:itemTextColor="@color/white"
             app:labelVisibilityMode="labeled"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:menu="@menu/navi_app_bar">
+            app:menu="@menu/navi_app_bar"/>
 
-        </com.google.android.material.bottomnavigation.BottomNavigationView>
 
-    </com.google.android.material.appbar.AppBarLayout>
+
+
 
 
 
