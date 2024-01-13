@@ -2,7 +2,7 @@ package com.bregandert.filmsearch.view.rv_adapters
 
 
 import androidx.recyclerview.widget.DiffUtil
-import com.bregandert.filmsearch.domain.Film
+import com.bregandert.filmsearch.data.entity.Film
 
 
 class FilmDiff(val oldList: List<Film>, val newList: List<Film>) : DiffUtil.Callback() {

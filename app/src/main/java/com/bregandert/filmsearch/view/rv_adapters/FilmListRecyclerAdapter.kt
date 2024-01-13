@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bregandert.filmsearch.view.rv_viewholders.FilmViewHolder
 import com.bregandert.filmsearch.databinding.FilmItemBinding
-import com.bregandert.filmsearch.domain.Film
+import com.bregandert.filmsearch.data.entity.Film
 
 
 //в параметр передаем слушатель, чтобы мы потом могли обрабатывать нажатия из класса Activity
@@ -55,5 +55,9 @@ class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
     //Интерфейс для обработки кликов
     interface OnItemClickListener {
         fun click(film: Film, position: Int, binding: FilmItemBinding)
+    }
+
+    fun clearFilms() {
+        films.clear()
     }
 }

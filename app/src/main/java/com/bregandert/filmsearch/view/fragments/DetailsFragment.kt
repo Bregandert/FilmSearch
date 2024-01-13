@@ -11,7 +11,7 @@ import com.bregandert.filmsearch.App
 import com.bregandert.filmsearch.R
 import com.bregandert.filmsearch.data.ApiConstants
 import com.bregandert.filmsearch.databinding.FragmentDetailsBinding
-import com.bregandert.filmsearch.domain.Film
+import com.bregandert.filmsearch.data.entity.Film
 import com.bumptech.glide.Glide
 
 

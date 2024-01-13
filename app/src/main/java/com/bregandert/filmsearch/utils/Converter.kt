@@ -1,7 +1,7 @@
 package com.bregandert.filmsearch.utils
 
-import com.bregandert.filmsearch.data.Entity.TmdbFilm
-import com.bregandert.filmsearch.domain.Film
+import com.bregandert.filmsearch.data.entity.TmdbFilm
+import com.bregandert.filmsearch.data.entity.Film
 
 object Converter {
 
