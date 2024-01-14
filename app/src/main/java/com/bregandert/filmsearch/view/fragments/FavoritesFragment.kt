@@ -5,15 +5,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+
 import com.bregandert.filmsearch.view.rv_adapters.FilmListRecyclerAdapter
 import com.bregandert.filmsearch.view.MainActivity
 
 import com.bregandert.filmsearch.databinding.FragmentFavoritesBinding
 import com.bregandert.filmsearch.databinding.FilmItemBinding
 import com.bregandert.filmsearch.view.rv_adapters.TopSpacingItemDecoration
-import com.bregandert.filmsearch.domain.Film
+import com.bregandert.filmsearch.data.entity.Film
 import com.bregandert.filmsearch.utils.AnimationHelper
 import com.bregandert.filmsearch.viewmodel.FavoriteFragmentViewModel
 
@@ -22,9 +23,7 @@ class FavoritesFragment : Fragment() {
 
     private lateinit var binding: FragmentFavoritesBinding
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
-    private val viewModel by lazy {
-        ViewModelProvider.NewInstanceFactory().create(FavoriteFragmentViewModel::class.java)
-    }
+    private val viewModel: FavoriteFragmentViewModel by activityViewModels()
 
     private var filmsDataBase = listOf<Film>()
         set(value) {
@@ -53,6 +52,7 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun initFavorites(){
+
         filmsAdapter = FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
             override fun click(film : Film, position: Int, binding: FilmItemBinding) {
                 (requireActivity() as MainActivity).launchDetailsFragment(film, position, binding)

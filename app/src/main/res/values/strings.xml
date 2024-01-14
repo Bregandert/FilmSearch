@@ -15,6 +15,15 @@
     <string name="activity_watch_later">Добавлено в список "Смотреть позже"</string>
     <string name="activity_share">Share!</string>
     <string name="double_back_toast">Нажмите еще раз для выхода</string>
+    <string name="category_choice_header">Select a category</string>
+    <string name="radio_button_popular">Popular</string>
+    <string name="radio_button_top_rated">Top rated</string>
+    <string name="radio_button_upcoming">Upcoming</string>
+    <string name="radio_button_playing">Playing</string>
+    <string name="api_error_message">API error happened</string>
+    <string name="permission_storage">Нет разрешения. Пожалуйста, предоставьте разрешение</string>
+    <string name="downloaded_to_gallery">Сохранено в галерею</string>
+    <string name="open">В галерею</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->

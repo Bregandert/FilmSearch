@@ -1,22 +1,22 @@
 package com.bregandert.filmsearch
 
 import android.app.Application
-import androidx.lifecycle.ViewModelProvider.NewInstanceFactory.Companion.instance
-import com.bregandert.filmsearch.data.MainRepository
-import com.bregandert.filmsearch.domain.Interactor
+import com.bregandert.filmsearch.di.AppComponent
+import com.bregandert.filmsearch.di.DaggerAppComponent
+import com.bregandert.filmsearch.di.modules.DatabaseModule
+import com.bregandert.filmsearch.di.modules.DomainModule
+import com.bregandert.filmsearch.di.modules.RemoteModule
+
 
 class App : Application() {
-    lateinit var repo: MainRepository
-    lateinit var interactor: Interactor
+    lateinit var dagger: AppComponent
+    val FRAGMENT_TAG = "fragment"
+    val BACK_CLICK_TIME_INTERVAL = 2000L
+    val API_REQUEST_TIME_INTERVAL = 1000L * 60 * 10
+    val FILM = "film"
+    val POSITION = "position"
+    val TRANSITION_NAME = "transition"
 
-
-        val TIME_INTERVAL = 2000L
-        val FILM = "film"
-        val POSITION = "position"
-        val TRANSITION_NAME = "transition"
-        val POSTER = "poster"
-        val DESCRIPTION = "description"
-        val FRAGMENT_TAG = "tag"
 
 
 
@@ -24,11 +24,13 @@ class App : Application() {
         super.onCreate()
         //Инициализируем экземпляр App, через который будем получать доступ к остальным переменным
         instance = this
-        //Инициализируем репозиторий
-        repo = MainRepository()
-        //Инициализируем интерактор
-        interactor = Interactor(repo)
-    }
+        //Создаем компонент
+        dagger = DaggerAppComponent.builder()
+            .remoteModule(RemoteModule())
+            .databaseModule(DatabaseModule())
+            .domainModule(DomainModule(this))
+            .build()
+        }
 
     companion object {
         //Здесь статически хранится ссылка на экземпляр App

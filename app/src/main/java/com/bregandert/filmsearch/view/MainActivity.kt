@@ -5,15 +5,17 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.replace
 import com.bregandert.filmsearch.App
 import com.bregandert.filmsearch.R
 import com.bregandert.filmsearch.databinding.ActivityMainBinding
 import com.bregandert.filmsearch.databinding.FilmItemBinding
-import com.bregandert.filmsearch.domain.Film
+import com.bregandert.filmsearch.data.entity.Film
 import com.bregandert.filmsearch.view.fragments.DetailsFragment
 import com.bregandert.filmsearch.view.fragments.FavoritesFragment
 import com.bregandert.filmsearch.view.fragments.HomeFragment
 import com.bregandert.filmsearch.view.fragments.SelectionsFragment
+import com.bregandert.filmsearch.view.fragments.SettingsFragment
 import com.bregandert.filmsearch.view.fragments.WatchLaterFragment
 
 
@@ -26,6 +28,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
@@ -39,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager
             .beginTransaction()
             .add(R.id.fragment_placeholder, HomeFragment())
-            .addToBackStack(App.Companion.instance.FRAGMENT_TAG)
+            .addToBackStack(App.instance.FRAGMENT_TAG)
             .commit()
 
     }
@@ -50,8 +53,9 @@ class MainActivity : AppCompatActivity() {
 
     // Check back pressed. If 2 times in less than 2 sec om main screen - exit. If not main screen (fragment) - back.
     override fun onBackPressed() {
+        super.onBackPressed()
         if (supportFragmentManager.backStackEntryCount <= 1) {
-            if (backPressed + App.instance.TIME_INTERVAL > System.currentTimeMillis()) {
+            if (backPressed + App.instance.BACK_CLICK_TIME_INTERVAL > System.currentTimeMillis()) {
                 onBackPressedDispatcher.onBackPressed()
                 finish()
             } else {
@@ -79,50 +83,46 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        binding.navyAppBar.setOnItemSelectedListener {
+        binding.bottomNavigation.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.home -> {
                     val tag = "home"
-                    val fragment = checkFragmentExistence(tag)
-                    //В первом параметре, если фрагмент не найден и метод вернул null, то с помощью
-                    //элвиса мы вызываем создание нвого фрагмента
-                    changeFragment(fragment?: HomeFragment(), tag)
+                    val fragment = supportFragmentManager.findFragmentByTag(tag) ?: HomeFragment()
+                    supportFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.fragment_placeholder, fragment, tag)
+                        .addToBackStack(App.instance.FRAGMENT_TAG)
+                        .commit()
                     true
                 }
                 R.id.favorites -> {
                     val tag = "favorites"
-                    val fragment = checkFragmentExistence(tag)
-                    changeFragment(fragment?: FavoritesFragment(), tag)
+                    val fragment = supportFragmentManager.findFragmentByTag(tag) ?: FavoritesFragment()
+                    supportFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.fragment_placeholder, fragment, tag)
+                        .addToBackStack(App.instance.FRAGMENT_TAG)
+                        .commit()
                     true
                 }
-                R.id.watch_later -> {
-                    val tag = "watch_later"
-                    val fragment = checkFragmentExistence(tag)
-                    changeFragment(fragment?: WatchLaterFragment(), tag)
+                R.id.settings -> {
+                    val tag = "settings"
+                    val fragment = supportFragmentManager.findFragmentByTag(tag) ?: SettingsFragment()
+                    supportFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.fragment_placeholder, fragment, tag)
+                        .addToBackStack(App.instance.FRAGMENT_TAG)
+                        .commit()
                     true
                 }
-                R.id.selections -> {
-                    val tag = "selections"
-                    val fragment = checkFragmentExistence(tag)
-                    changeFragment(fragment?: SelectionsFragment(), tag)
-                    true
-                }
+
                 else -> false
 
             }
         }
     }
 
-    //Ищем фрагмент по тэгу, если он есть то возвращаем его, если нет - то null
-    private fun checkFragmentExistence(tag: String): Fragment? = supportFragmentManager.findFragmentByTag(tag)
 
-    private fun changeFragment(fragment: Fragment, tag: String) {
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.fragment_placeholder, fragment, tag)
-            .addToBackStack(App.instance.FRAGMENT_TAG)
-            .commit()
-    }
 
     fun launchDetailsFragment(film: Film, position: Int, filmItemBinding: FilmItemBinding) {
         val bundle = Bundle()

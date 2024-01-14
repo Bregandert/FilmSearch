@@ -12,13 +12,9 @@
         android:icon="@drawable/round_favorite"
         android:title="@string/menu_favorites_title"
         app:showAsAction="withText"/>
+
     <item
-        android:id="@+id/watch_later"
-        android:icon="@drawable/round_watch_later"
-        android:title="@string/menu_watch_later_title"
-        app:showAsAction="withText"/>
-    <item
-        android:id="@+id/selections"
+        android:id="@+id/settings"
         android:icon="@drawable/round_video_library"
         android:title="@string/menu_selections_title"
         app:showAsAction="withText"/>
