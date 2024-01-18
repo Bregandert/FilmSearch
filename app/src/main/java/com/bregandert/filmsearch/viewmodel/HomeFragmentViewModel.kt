@@ -10,6 +10,8 @@ import com.bregandert.filmsearch.App
 import com.bregandert.filmsearch.data.entity.Film
 import com.bregandert.filmsearch.domain.Interactor
 import com.bregandert.filmsearch.utils.SingleLiveEvent
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class HomeFragmentViewModel(state: SavedStateHandle): ViewModel() {
@@ -17,15 +19,16 @@ class HomeFragmentViewModel(state: SavedStateHandle): ViewModel() {
     @Inject
     lateinit var interactor: Interactor
 
-    val filmsListLiveData: LiveData<List<Film>>
+    val filmsList: Flow<List<Film>>
     val apiErrorEvent = SingleLiveEvent<String>()
     private var toLoadFromApi = true
     private var page = 0
-    private val savedStateHandle = state
-    val showProgressBar: MutableLiveData<Boolean> =MutableLiveData()
+
+    val showProgressBar: Channel<Boolean>
     init {
         App.instance.dagger.inject(this)
-        filmsListLiveData = interactor.getFilmsFromDB()
+        showProgressBar = interactor.progressBarState
+        filmsList = interactor.getFilmsFromDB()
         loadFirstPage()
     }
 
@@ -34,14 +37,14 @@ class HomeFragmentViewModel(state: SavedStateHandle): ViewModel() {
     fun addNextPage() {
         if(!toLoadFromApi) return // грузим следующую страницу только если загружаем дынные из Api
 
-        showProgressBar.postValue(true) //начинаем загрузку фильмов из API и показываем ProgressBar
+
         interactor.getFilmsFromApi(++page, object : Interactor.ApiCallback {
             override fun onSuccess() {
-                showProgressBar.postValue(false) //скрываем ProgressBar по завершении загрузки
+//                showProgressBar.postValue(false) //скрываем ProgressBar по завершении загрузки
             }
             override fun onFailure() {
                 apiErrorEvent.postValue("MainFragment")
-                showProgressBar.postValue(false)
+//                showProgressBar.postValue(false)
                 page--
             }
         })

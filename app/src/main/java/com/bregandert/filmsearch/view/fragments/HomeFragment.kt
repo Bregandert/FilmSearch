@@ -22,11 +22,17 @@ import com.bregandert.filmsearch.databinding.FilmItemBinding
 import com.bregandert.filmsearch.data.entity.Film
 import com.bregandert.filmsearch.utils.AnimationHelper
 import com.bregandert.filmsearch.viewmodel.HomeFragmentViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HomeFragment : Fragment() {
 
     private lateinit var homeBinding: FragmentHomeBinding
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
+    private lateinit var scope: CoroutineScope
 
     private val viewModel: HomeFragmentViewModel by activityViewModels()
 
@@ -75,17 +81,36 @@ class HomeFragment : Fragment() {
             requireActivity(),
             0
         )
+    }
 
-
+//    отменяем scope чтобы остановить корутину
+    override fun onStop() {
+        super.onStop()
+        scope.cancel()
     }
 
     private fun readFilmsDBFromViewModel() {
-        viewModel.filmsListLiveData.observe(viewLifecycleOwner) {
-            filmsDataBase = it
+//        читаем список фильмов в корутине
+        scope = CoroutineScope(Dispatchers.IO).also { scope ->
+            scope.launch {
+                viewModel.filmsList.collect {
+                    withContext(Dispatchers.Main) {
+
+                        filmsDataBase = it
+                    }
+            }
+        }
         }
 
-        viewModel.showProgressBar.observe(viewLifecycleOwner) {
-            homeBinding.progressBar.isVisible = it
+//        viewModel.showProgressBar.observe(viewLifecycleOwner) {
+//            homeBinding.progressBar.isVisible = it
+//        }
+        scope.launch {
+            for (element in viewModel.showProgressBar) {
+                launch(Dispatchers.Main) {
+                    homeBinding.progressBar.isVisible = element
+                }
+            }
         }
 
         viewModel.apiErrorEvent.observe(viewLifecycleOwner) {
@@ -195,5 +220,7 @@ class HomeFragment : Fragment() {
         readFilmsDBFromViewModel()
         filmsAdapter.addItems(filmsDataBase)
     }
+
+
 }
 

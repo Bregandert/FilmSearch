@@ -8,16 +8,18 @@ object Converter {
     fun convertApiListToDtoList(list: List<TmdbFilm>?): List<Film> {
         val result = mutableListOf<Film>()
         list?.forEach {
-            result.add(
-                Film(
-                title = it.title,
-                poster = it.posterPath,
-                description = it.overview,
-                rating = it.voteAverage,
-                isFavorite = false
-            )
-            )
+         result.add(convertApiToFilm(it))
         }
         return result
+    }
+
+    fun convertApiToFilm(apiData: TmdbFilm): Film {
+        return Film(
+            title = apiData.title,
+            poster = apiData.posterPath,
+            description = apiData.overview,
+            rating = apiData.voteAverage / 10f,
+            isFavorite = false
+        )
     }
 }
