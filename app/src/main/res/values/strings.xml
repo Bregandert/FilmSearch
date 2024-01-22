@@ -21,6 +21,9 @@
     <string name="radio_button_upcoming">Upcoming</string>
     <string name="radio_button_playing">Playing</string>
     <string name="api_error_message">API error happened</string>
+    <string name="permission_storage">Нет разрешения. Пожалуйста, предоставьте разрешение</string>
+    <string name="downloaded_to_gallery">Сохранено в галерею</string>
+    <string name="open">В галерею</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->

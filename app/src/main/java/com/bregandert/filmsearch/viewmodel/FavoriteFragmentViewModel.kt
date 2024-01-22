@@ -5,11 +5,12 @@ import androidx.lifecycle.ViewModel
 import com.bregandert.filmsearch.App
 import com.bregandert.filmsearch.data.entity.Film
 import com.bregandert.filmsearch.domain.Interactor
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class FavoriteFragmentViewModel: ViewModel() {
 
-    val filmsListLiveData = MutableLiveData<List<Film>>()
+    val filmsList: Flow<List<Film>>
 
     @Inject
     lateinit var interactor: Interactor
@@ -17,13 +18,14 @@ class FavoriteFragmentViewModel: ViewModel() {
     init {
 
         App.instance.dagger.inject(this)
-        interactor.getFilmsFromApi(1, object : Interactor.ApiCallback {
-            override fun onSuccess() {
-
-            }
-            override fun onFailure() {
-            }
-        })
+//        interactor.getFilmsFromApi(1, object : Interactor.ApiCallback {
+//            override fun onSuccess() {
+//
+//            }
+//            override fun onFailure() {
+//            }
+//        })
+        filmsList = interactor.getFavouriteFilmsFromDB()
     }
 
 }
