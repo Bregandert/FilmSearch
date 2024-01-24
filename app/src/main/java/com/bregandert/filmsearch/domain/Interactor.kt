@@ -9,6 +9,10 @@ import com.bregandert.filmsearch.data.PreferenceProvider
 import com.bregandert.filmsearch.data.TmdbApi
 
 import com.bregandert.filmsearch.utils.Converter
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -29,48 +33,59 @@ class Interactor(
     private val preferences: PreferenceProvider
 ) {
 
-    var progressBarState = Channel<Boolean>(Channel.CONFLATED)
+    var progressBarState : BehaviorSubject<Boolean> = BehaviorSubject.create()
     val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
 
-    fun getFilmsFromApi(page: Int, callback: ApiCallback) {
+    fun getFilmsFromApi(page: Int) {
 
 //        показываем ProgressBar
-        scope.launch {
-            progressBarState.send(true)
-        }
+        progressBarState.onNext(true)
 
+//        Переключаемся на RxJava observable
         retrofitService.getFilms(
             getDefaultCategoryFromPreferences(),
             APIKey.KEY,
             "ru-RU",
             page
-        ).enqueue(object : Callback<TmdbResults> {
-            override fun onResponse(
-                call: Call<TmdbResults>,
-                response: Response<TmdbResults>
-            ) {
-
-                scope.launch {
-//                    Преобразование ответа API в список фильмов с помощью потока
-                    val list = response.body()?.tmdbFilms?.asFlow()?.map {
-                        Converter.convertApiToFilm(it)
-                    }?.toList()
-                    saveFilmsToDB(list)
-                    progressBarState.send(false)
-                }
-                callback.onSuccess()
+        )
+            .map { dto ->
+                Converter.convertApiListToDtoList(dto.tmdbFilms)
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
+            .subscribe { list ->
+                saveFilmsToDB(list)
+                progressBarState.onNext(false)
             }
 
 
-            override fun onFailure(call: Call<TmdbResults>, t: Throwable) {
-                //В случае провала вызываем другой метод коллбека
-                scope.launch {
-                    progressBarState.send(false)
-                }
-                callback.onFailure()
-            }
-        })
+//            .enqueque (object : Callback<TmdbResults> {
+//            override fun onResponse(
+//                call: Call<TmdbResults>,
+//                response: Response<TmdbResults>
+//            ) {
+//
+//                scope.launch {
+////                    Преобразование ответа API в список фильмов с помощью потока
+//                    val list = response.body()?.tmdbFilms?.asFlow()?.map {
+//                        Converter.convertApiToFilm(it)
+//                    }?.toList()
+//                    saveFilmsToDB(list)
+//                    progressBarState.send(false)
+//                }
+//                callback.onSuccess()
+//            }
+//
+//
+//            override fun onFailure(call: Call<TmdbResults>, t: Throwable) {
+//                //В случае провала вызываем другой метод коллбека
+//                scope.launch {
+//                    progressBarState.send(false)
+//                }
+//                callback.onFailure()
+//            }
+//        })
     }
 
 
@@ -79,13 +94,21 @@ class Interactor(
         repo.clearFilmsDB()
     }
 
-    fun saveFilmsToDB(list: List<Film>?) {
+    fun clearListAfterCategoryChange() {
+        Completable.fromSingle<List<Film>> {
+            repo.clearFilmsDB()
+        }
+            .subscribeOn(Schedulers.io())
+            .subscribe()
+    }
+
+    fun saveFilmsToDB(list: List<Film>) {
         repo.putFilmsToDb(list)
     }
 
-    fun getFilmsFromDB(): Flow<List<Film>> = repo.getAllFilmsFromDB()
+    fun getFilmsFromDB(): Observable<List<Film>> = repo.getAllFilmsFromDB()
 
-    fun getFavouriteFilmsFromDB(): Flow<List<Film>> = repo.getFavouriteFilmsFromDB()
+//    fun getFavouriteFilmsFromDB(): Flow<List<Film>> = repo.getFavouriteFilmsFromDB()
 
 //    Взаимодействуем с дефолтным значением категории
     fun saveDefaultCategoryToPreferences(category: String) {
@@ -108,8 +131,8 @@ class Interactor(
 
     fun getCategoryInDB() = preferences.getCategoryInDB()
 
-    interface ApiCallback {
-        fun onSuccess()
-        fun onFailure()
-    }
+//    interface ApiCallback {
+//        fun onSuccess()
+//        fun onFailure()
+//    }
 }
