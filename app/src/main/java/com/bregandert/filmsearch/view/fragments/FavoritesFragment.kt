@@ -43,9 +43,9 @@ class FavoritesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.filmsListLiveData.observe(viewLifecycleOwner, Observer<List<Film>> {
-            filmsDataBase = it
-        })
+//        viewModel.filmsListLiveData.observe(viewLifecycleOwner, Observer<List<Film>> {
+//            filmsDataBase = it
+//        })
 
         initFavorites()
         AnimationHelper.performFragmentCircularRevealAnimation(binding.root, requireActivity(), 1)

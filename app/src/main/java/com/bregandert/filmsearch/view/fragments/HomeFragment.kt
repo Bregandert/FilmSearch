@@ -2,39 +2,41 @@ package com.bregandert.filmsearch.view.fragments
 
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import com.bregandert.filmsearch.databinding.FragmentHomeBinding
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.core.view.isVisible
-import androidx.fragment.app.activityViewModels
+
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bregandert.filmsearch.R
-import com.bregandert.filmsearch.view.rv_adapters.FilmListRecyclerAdapter
-import com.bregandert.filmsearch.view.MainActivity
-import com.bregandert.filmsearch.view.rv_adapters.TopSpacingItemDecoration
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.bregandert.filmsearch.databinding.FilmItemBinding
 import com.bregandert.filmsearch.data.entity.Film
+import com.bregandert.filmsearch.databinding.FragmentHomeBinding
 import com.bregandert.filmsearch.utils.AnimationHelper
+import com.bregandert.filmsearch.utils.AutoDisposable
+import com.bregandert.filmsearch.utils.addTo
+
+import com.bregandert.filmsearch.view.MainActivity
+import com.bregandert.filmsearch.view.rv_adapters.FilmListRecyclerAdapter
+import com.bregandert.filmsearch.view.rv_adapters.TopSpacingItemDecoration
 import com.bregandert.filmsearch.viewmodel.HomeFragmentViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
+
 
 class HomeFragment : Fragment() {
 
     private lateinit var homeBinding: FragmentHomeBinding
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
-    private lateinit var scope: CoroutineScope
+//    private lateinit var scope: CoroutineScope
 
-    private val viewModel: HomeFragmentViewModel by activityViewModels()
+    private val viewModel: HomeFragmentViewModel by viewModels<HomeFragmentViewModel>()//activityViewModels()
+    private val autoDisposable = AutoDisposable()
+
 
     //    Создадим переменную, куда будем класть нашу БД из ViewModel, чтобы у нас не сломался поиск
     private var filmsDataBase = listOf<Film>()
@@ -47,6 +49,11 @@ class HomeFragment : Fragment() {
             //Обновляем RV адаптер
             filmsAdapter.addItems(field)
         }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        autoDisposable.bindTo(lifecycle)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,7 +68,8 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        readFilmsDBFromViewModel()
+//        установка данных из ViewModel
+        setupDataFromViewModel()
 
         //Поиск не при нажатии на иконку, а на все поле поиска
         homeBinding.searchView.setOnClickListener {
@@ -84,40 +92,26 @@ class HomeFragment : Fragment() {
     }
 
 //    отменяем scope чтобы остановить корутину
-    override fun onStop() {
-        super.onStop()
-        scope.cancel()
-    }
+//    override fun onStop() {
+//        super.onStop()
+//        scope.cancel()
+//    }
 
-    private fun readFilmsDBFromViewModel() {
-//        читаем список фильмов в корутине
-        scope = CoroutineScope(Dispatchers.IO).also { scope ->
-            scope.launch {
-                viewModel.filmsList.collect {
-                    withContext(Dispatchers.Main) {
+    private fun setupDataFromViewModel() {
 
-                        filmsDataBase = it
-                    }
+        viewModel.filmsList
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe{list -> filmsDataBase = list}
+            .addTo(autoDisposable)
+
+        viewModel.showProgressBar
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                homeBinding.progressBar.isVisible = it
             }
-        }
-        }
-
-//        viewModel.showProgressBar.observe(viewLifecycleOwner) {
-//            homeBinding.progressBar.isVisible = it
-//        }
-        scope.launch {
-            for (element in viewModel.showProgressBar) {
-                launch(Dispatchers.Main) {
-                    homeBinding.progressBar.isVisible = element
-                }
-            }
-        }
-
-        viewModel.apiErrorEvent.observe(viewLifecycleOwner) {
-            Toast.makeText(homeBinding.root.context, it + ":" + getString(R.string.api_error_message), Toast.LENGTH_LONG).show()
-        }
-
-
+            .addTo(autoDisposable)
     }
 
     private fun initSearchView() {
@@ -217,8 +211,8 @@ class HomeFragment : Fragment() {
 
     private fun refreshFragment() {
         viewModel.loadFirstPage()
-        readFilmsDBFromViewModel()
-        filmsAdapter.addItems(filmsDataBase)
+//        readFilmsDBFromViewModel()
+//        filmsAdapter.addItems(filmsDataBase)
     }
 
 

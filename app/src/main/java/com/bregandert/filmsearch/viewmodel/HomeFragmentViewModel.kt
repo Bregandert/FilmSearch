@@ -1,30 +1,27 @@
 package com.bregandert.filmsearch.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 
 import com.bregandert.filmsearch.App
 import com.bregandert.filmsearch.data.entity.Film
 import com.bregandert.filmsearch.domain.Interactor
-import com.bregandert.filmsearch.utils.SingleLiveEvent
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.subjects.BehaviorSubject
+
 import javax.inject.Inject
 
-class HomeFragmentViewModel(state: SavedStateHandle): ViewModel() {
+class HomeFragmentViewModel: ViewModel() {
 
     @Inject
     lateinit var interactor: Interactor
 
-    val filmsList: Flow<List<Film>>
-    val apiErrorEvent = SingleLiveEvent<String>()
+    val filmsList: Observable<List<Film>>
+//    val apiErrorEvent = SingleLiveEvent<String>()
     private var toLoadFromApi = true
     private var page = 0
 
-    val showProgressBar: Channel<Boolean>
+    val showProgressBar: BehaviorSubject<Boolean>
     init {
         App.instance.dagger.inject(this)
         showProgressBar = interactor.progressBarState
@@ -36,18 +33,7 @@ class HomeFragmentViewModel(state: SavedStateHandle): ViewModel() {
 
     fun addNextPage() {
         if(!toLoadFromApi) return // грузим следующую страницу только если загружаем дынные из Api
-
-
-        interactor.getFilmsFromApi(++page, object : Interactor.ApiCallback {
-            override fun onSuccess() {
-//                showProgressBar.postValue(false) //скрываем ProgressBar по завершении загрузки
-            }
-            override fun onFailure() {
-                apiErrorEvent.postValue("MainFragment")
-//                showProgressBar.postValue(false)
-                page--
-            }
-        })
+        interactor.getFilmsFromApi(++page)
     }
 
     fun loadFirstPage() {
