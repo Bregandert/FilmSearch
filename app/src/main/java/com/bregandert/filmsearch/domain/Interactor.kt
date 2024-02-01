@@ -58,34 +58,29 @@ class Interactor(
                 saveFilmsToDB(list)
                 progressBarState.onNext(false)
             }
+    }
 
+    fun searchFilmsFromApi(query: String, page: Int){
+//        показываем ProgressBar
+        progressBarState.onNext(true)
 
-//            .enqueque (object : Callback<TmdbResults> {
-//            override fun onResponse(
-//                call: Call<TmdbResults>,
-//                response: Response<TmdbResults>
-//            ) {
-//
-//                scope.launch {
-////                    Преобразование ответа API в список фильмов с помощью потока
-//                    val list = response.body()?.tmdbFilms?.asFlow()?.map {
-//                        Converter.convertApiToFilm(it)
-//                    }?.toList()
-//                    saveFilmsToDB(list)
-//                    progressBarState.send(false)
-//                }
-//                callback.onSuccess()
-//            }
-//
-//
-//            override fun onFailure(call: Call<TmdbResults>, t: Throwable) {
-//                //В случае провала вызываем другой метод коллбека
-//                scope.launch {
-//                    progressBarState.send(false)
-//                }
-//                callback.onFailure()
-//            }
-//        })
+//        ищем фильм по строке из Api
+        retrofitService.searchFilms(
+            query,
+            APIKey.KEY,
+            "ru-Ru",
+            page
+        )
+            .doOnError { t -> null }
+            .map {dto ->
+                Converter.convertApiListToDtoList(dto.tmdbFilms)
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
+            .subscribe { list ->
+                saveFilmsToDB(list)
+                progressBarState.onNext(false)
+            }
     }
 
 

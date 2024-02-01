@@ -26,7 +26,7 @@ class HomeFragmentViewModel: ViewModel() {
         App.instance.dagger.inject(this)
         showProgressBar = interactor.progressBarState
         filmsList = interactor.getFilmsFromDB()
-        loadFirstPage()
+        loadFirstPage(false)
     }
 
 
@@ -36,13 +36,13 @@ class HomeFragmentViewModel: ViewModel() {
         interactor.getFilmsFromApi(++page)
     }
 
-    fun loadFirstPage() {
+    fun loadFirstPage(fromApi: Boolean) {
         val currentTime = System.currentTimeMillis()
         val savedTime = interactor.getLastAPIRequestTime()
 
         page = 0
         // если с момента последнего вызова API или изменения категории прошло больше установленного времени, запросите API еще раз
-        if (
+        if (fromApi ||
             (currentTime - savedTime) > App.instance.API_REQUEST_TIME_INTERVAL ||
             interactor.getDefaultCategoryFromPreferences() != interactor.getCategoryInDB()
         ) {
@@ -58,6 +58,15 @@ class HomeFragmentViewModel: ViewModel() {
         }
     }
 
+    fun loadSearchResults(query: String) {
+        page = 0
+        interactor.clearLocalFilmsDB()
+        addSearchResultsPage(query)
+    }
+
+    fun addSearchResultsPage(query: String) {
+        interactor.searchFilmsFromApi(query, ++page)
+    }
 
 
 }
