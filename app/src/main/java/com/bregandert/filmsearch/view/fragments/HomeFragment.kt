@@ -25,7 +25,9 @@ import com.bregandert.filmsearch.view.rv_adapters.FilmListRecyclerAdapter
 import com.bregandert.filmsearch.view.rv_adapters.TopSpacingItemDecoration
 import com.bregandert.filmsearch.viewmodel.HomeFragmentViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 
 
 class HomeFragment : Fragment() {
@@ -91,11 +93,7 @@ class HomeFragment : Fragment() {
         )
     }
 
-//    отменяем scope чтобы остановить корутину
-//    override fun onStop() {
-//        super.onStop()
-//        scope.cancel()
-//    }
+
 
     private fun setupDataFromViewModel() {
 
@@ -116,33 +114,34 @@ class HomeFragment : Fragment() {
 
     private fun initSearchView() {
 
-        //Подключаем слушателя изменений введенного текста в поиска
-        homeBinding.searchView.setOnQueryTextListener(object : OnQueryTextListener {
-            //Этот метод отрабатывает при нажатии кнопки "поиск" на софт клавиатуре
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return true
-            }
+        Observable.create<String> {
+            //Подключаем слушателя изменений введенного текста в поиска
+            homeBinding.searchView.setOnQueryTextListener(object : OnQueryTextListener {
+                //Этот метод отрабатывает при нажатии кнопки "поиск" на софт клавиатуре
+                override fun onQueryTextSubmit(query: String?): Boolean = true
 
-            //Этот метод отрабатывает на каждое изменения текста
-            override fun onQueryTextChange(newText: String?): Boolean {
-                //Если ввод пуст то вставляем в адаптер всю БД
-                if (newText.isNullOrBlank()) {
-                    filmsAdapter.addItems(filmsDataBase)
+                //Этот метод отрабатывает на каждое изменения текста
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    //Если ввод пуст то вставляем в адаптер всю БД
+                    if (newText.isNullOrBlank()) {
+                        viewModel.loadFirstPage(true)
+                        return true
+                    }
+                    it.onNext(newText)
                     return true
                 }
-                //Фильтруем список на поиск подходящих сочетаний
-                val result = filmsDataBase.filter {
-                    //Чтобы все работало правильно, нужно запрос и имя фильма приводить к нижнему регистру
-                    it.title.lowercase()
-                        .contains(newText.lowercase())
-                }
-                //Добавляем в адаптер
-                filmsAdapter.addItems(result)
-                return true
+            })
+        }
+            .debounce (1, TimeUnit.SECONDS)
+            .subscribe {
+                viewModel.loadSearchResults(it)
             }
-
-        })
     }
+
+
+
+
+
 
 
     //находим наш RV
@@ -190,7 +189,11 @@ class HomeFragment : Fragment() {
                 if (!isLoading) {
                     if (visibleItemCount + firstVisibleItems >= totalItemCount - 3) {
                         isLoading = true
-                        viewModel.addNextPage()
+                        if(homeBinding.searchView.query.isNullOrBlank()) {
+                            viewModel.addNextPage()
+                        } else {
+                            viewModel.addSearchResultsPage(homeBinding.searchView.query.toString())
+                        }
                         isLoading = false
                     }
                 }
@@ -204,13 +207,13 @@ class HomeFragment : Fragment() {
 
     private fun initPullToRefresh() {
         homeBinding.pullToRefresh.setOnRefreshListener {
-            refreshFragment()
+
             homeBinding.pullToRefresh.isRefreshing = false
         }
     }
 
     private fun refreshFragment() {
-        viewModel.loadFirstPage()
+        viewModel.loadFirstPage(false)
 //        readFilmsDBFromViewModel()
 //        filmsAdapter.addItems(filmsDataBase)
     }
