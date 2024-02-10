@@ -1,9 +1,6 @@
-package com.bregandert.filmsearch.di.modules
+package com.bregandert.retrofit
 
-import com.bregandert.filmsearch.BuildConfig
-import com.bregandert.filmsearch.data.ApiConstants
-import com.bregandert.filmsearch.data.TmdbApi
-
+import com.bregandert.retrofit.entity.ApiConstants
 import dagger.Module
 import dagger.Provides
 import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
@@ -13,9 +10,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
-
-
-
 
 @Module
 class RemoteModule {
@@ -28,9 +22,9 @@ class RemoteModule {
         .readTimeout(30, TimeUnit.SECONDS)
 //    добавляем логгер
         .addInterceptor(HttpLoggingInterceptor().apply {
-        if (BuildConfig.DEBUG) {
-            level = HttpLoggingInterceptor.Level.BASIC
-        }
+            if (BuildConfig.DEBUG) {
+                level = HttpLoggingInterceptor.Level.BASIC
+            }
         })
         .build()
 
@@ -50,7 +44,4 @@ class RemoteModule {
     @Singleton
     fun provideTmdbApi(retrofit: Retrofit): TmdbApi = retrofit.create(TmdbApi::class.java)
 
-
-
 }
-

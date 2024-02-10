@@ -1,4 +1,4 @@
-package com.bregandert.filmsearch.data.db
+package com.bregandert.filmsearch.data
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

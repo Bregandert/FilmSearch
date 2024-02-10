@@ -3,12 +3,12 @@ package com.bregandert.filmsearch.view.rv_viewholders
 
 import androidx.recyclerview.widget.RecyclerView
 import com.bregandert.filmsearch.App
-import com.bregandert.filmsearch.data.ApiConstants
 
 
 import com.bregandert.filmsearch.databinding.FilmItemBinding
 import com.bregandert.filmsearch.data.entity.Film
 import com.bregandert.filmsearch.view.rv_adapters.FilmListRecyclerAdapter
+import com.bregandert.retrofit.entity.ApiConstants
 import com.bumptech.glide.Glide
 
 
@@ -34,7 +34,7 @@ class FilmViewHolder(val binding: FilmItemBinding) : RecyclerView.ViewHolder(bin
         }
         //Устанавливаем рейтинг
         binding.ratingView.setProgress((film.rating * 10).toInt())
-        bindingAdapterPosition
+        adapterPosition
     }
 
 

@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.bregandert.filmsearch.data.MainRepository
 import com.bregandert.filmsearch.data.dao.FilmDao
-import com.bregandert.filmsearch.data.db.AppDatabase
+import com.bregandert.filmsearch.data.AppDatabase
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

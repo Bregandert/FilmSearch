@@ -1,11 +1,11 @@
 package com.bregandert.filmsearch.utils
 
-import com.bregandert.filmsearch.data.entity.TmdbFilm
 import com.bregandert.filmsearch.data.entity.Film
+import com.bregandert.retrofit.entity.TmdbFilm
 
 object Converter {
 
-    fun convertApiListToDtoList(list: List<TmdbFilm>?): List<Film> {
+    fun convertApiListToDtoList(list: List<com.bregandert.retrofit.entity.TmdbFilm>?): List<Film> {
         val result = mutableListOf<Film>()
         list?.forEach {
             try {
@@ -17,12 +17,13 @@ object Converter {
         return result
     }
 
-    fun convertApiToFilm(apiData: TmdbFilm): Film {
+    fun convertApiToFilm(apiData: com.bregandert.retrofit.entity.TmdbFilm): Film {
         return Film(
             title = apiData.title,
             poster = apiData.posterPath,
             description = apiData.overview,
             rating = apiData.voteAverage / 10f,
+
             isFavorite = false
         )
     }

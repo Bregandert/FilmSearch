@@ -1,9 +1,8 @@
-package com.bregandert.filmsearch.data.entity
-
+package com.bregandert.retrofit.entity
 
 import com.google.gson.annotations.SerializedName
 
-data class TmdbResults(
+data class TmdbResultsDto (
     @SerializedName("page")
     val page: Int,
     @SerializedName("results")
