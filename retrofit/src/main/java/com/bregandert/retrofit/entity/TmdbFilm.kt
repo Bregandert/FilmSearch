@@ -1,9 +1,8 @@
-package com.bregandert.filmsearch.data.entity
-
+package com.bregandert.retrofit.entity
 
 import com.google.gson.annotations.SerializedName
 
-data class TmdbFilm(
+data class TmdbFilm (
     @SerializedName("adult")
     val adult: Boolean,
     @SerializedName("backdrop_path")

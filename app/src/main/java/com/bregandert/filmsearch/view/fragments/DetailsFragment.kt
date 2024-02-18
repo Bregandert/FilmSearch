@@ -20,10 +20,10 @@ import androidx.fragment.app.activityViewModels
 import com.bregandert.filmsearch.App
 
 import com.bregandert.filmsearch.R
-import com.bregandert.filmsearch.data.ApiConstants
 import com.bregandert.filmsearch.databinding.FragmentDetailsBinding
 import com.bregandert.filmsearch.data.entity.Film
 import com.bregandert.filmsearch.viewmodel.DetailsFragmentViewModel
+import com.bregandert.retrofit.entity.ApiConstants
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
@@ -50,8 +50,9 @@ class DetailsFragment : Fragment() {
 
         film = (
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    arguments?.getParcelable(App.Companion.instance.FILM, Film::class.java)
+                    arguments?.getParcelable(App.instance.FILM, Film::class.java)
                 } else {
+                    @Suppress("DEPRECATION")
                     arguments?.getParcelable(App.instance.FILM) as Film?
                 }
                 ) ?: return binding.root

@@ -3,7 +3,6 @@ package com.bregandert.filmsearch.di.modules
 import android.content.Context
 import com.bregandert.filmsearch.data.MainRepository
 import com.bregandert.filmsearch.data.PreferenceProvider
-import com.bregandert.filmsearch.data.TmdbApi
 import com.bregandert.filmsearch.domain.Interactor
 
 import dagger.Module
@@ -22,7 +21,7 @@ class DomainModule(val context: Context) {
 
         @Provides
         @Singleton
-        fun provideInteractor(repository: MainRepository, tmdbApi: TmdbApi, preferenceProvider: PreferenceProvider) =
+        fun provideInteractor(repository: MainRepository, tmdbApi: com.bregandert.retrofit.TmdbApi, preferenceProvider: PreferenceProvider) =
         Interactor(repo = repository, retrofitService = tmdbApi, preferences = preferenceProvider)
 
 }
