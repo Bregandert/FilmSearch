@@ -24,6 +24,8 @@
     <string name="permission_storage">Нет разрешения. Пожалуйста, предоставьте разрешение</string>
     <string name="downloaded_to_gallery">Сохранено в галерею</string>
     <string name="open">В галерею</string>
+    <string name="battery_low_toast">Battery low!</string>
+    <string name="power_cable_connected_toast">Power cable connected!</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->

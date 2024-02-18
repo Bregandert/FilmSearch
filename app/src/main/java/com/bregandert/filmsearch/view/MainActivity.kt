@@ -1,6 +1,9 @@
 package com.bregandert.filmsearch.view
 
 
+import android.content.BroadcastReceiver
+import android.content.Intent
+import android.content.IntentFilter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
@@ -11,6 +14,7 @@ import com.bregandert.filmsearch.R
 import com.bregandert.filmsearch.databinding.ActivityMainBinding
 import com.bregandert.filmsearch.databinding.FilmItemBinding
 import com.bregandert.filmsearch.data.entity.Film
+import com.bregandert.filmsearch.utils.BatteryReceiver
 import com.bregandert.filmsearch.view.fragments.DetailsFragment
 import com.bregandert.filmsearch.view.fragments.FavoritesFragment
 import com.bregandert.filmsearch.view.fragments.HomeFragment
@@ -23,6 +27,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private var backPressed = 0L
+    private lateinit var receiver : BroadcastReceiver
 
 
 
@@ -32,11 +37,19 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-//        Инициализируем слушатели меню навигации
+//        Инициализируем слушателей меню навигации
         initNavigation()
 //        инициализируем нашу ДБ
 //        initFilmsDB()
 
+        receiver = BatteryReceiver()
+
+//        Регистрируем Receiver для реакции на низкий заряд батареии и подключение кабеля
+        val filters = IntentFilter().apply {
+            addAction(Intent.ACTION_BATTERY_LOW)
+            addAction(Intent.ACTION_POWER_CONNECTED)
+        }
+        registerReceiver(receiver, filters)
 
 //        Запускаем Homefragment
         supportFragmentManager
@@ -45,6 +58,11 @@ class MainActivity : AppCompatActivity() {
             .addToBackStack(App.instance.FRAGMENT_TAG)
             .commit()
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(receiver)
     }
 
 
