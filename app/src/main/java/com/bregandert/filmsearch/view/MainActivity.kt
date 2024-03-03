@@ -1,9 +1,11 @@
 package com.bregandert.filmsearch.view
 
 
+import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
@@ -51,14 +53,32 @@ class MainActivity : AppCompatActivity() {
         }
         registerReceiver(receiver, filters)
 
-//        Запускаем Homefragment
-        supportFragmentManager
-            .beginTransaction()
-            .add(R.id.fragment_placeholder, HomeFragment())
-            .addToBackStack(App.instance.FRAGMENT_TAG)
-            .commit()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 99)
+        }
 
-    }
+        val film =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        intent?.getParcelableExtra(App.instance.FILM, Film::class.java)
+                    } else {
+                        @Suppress("DEPRECATION")
+                        intent?.getParcelableExtra(App.instance.FILM) as Film?
+                    }
+
+        if (film == null) {
+//            запускаем home fragment
+            supportFragmentManager
+                .beginTransaction()
+                .add(R.id.fragment_placeholder, HomeFragment())
+                .addToBackStack(App.instance.FRAGMENT_TAG)
+                .commit()
+        } else {
+            launchDetailsFragment(film)
+        }
+
+        }
+
+
 
     override fun onDestroy() {
         super.onDestroy()
@@ -142,10 +162,9 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    fun launchDetailsFragment(film: Film, position: Int, filmItemBinding: FilmItemBinding) {
+    fun launchDetailsFragment(film: Film) {
         val bundle = Bundle()
         bundle.putParcelable(App.instance.FILM, film)
-        bundle.putInt(App.instance.POSITION, position)
         val fragment = DetailsFragment()
         fragment.arguments = bundle
 

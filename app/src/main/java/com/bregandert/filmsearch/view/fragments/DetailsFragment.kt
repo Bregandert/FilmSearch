@@ -50,7 +50,7 @@ class DetailsFragment : Fragment() {
     ): View {
         binding = FragmentDetailsBinding.inflate(layoutInflater)
 
-        notificationService = NotificationService(requireContext().applicationContext)
+        notificationService = NotificationService(binding.root.context)
 
         film = (
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -60,9 +60,11 @@ class DetailsFragment : Fragment() {
                     arguments?.getParcelable(App.instance.FILM) as Film?
                 }
                 ) ?: return binding.root
+
+
         initDetails()
 
-        setFavoriteIcon()
+        setFavoriteFAB()
         setShareIcon()
         setDownloadFAB()
 
@@ -80,9 +82,7 @@ class DetailsFragment : Fragment() {
 //        binding.detailsPoster.setImageResource(film.poster)
         //Устанавливаем описание
         binding.detailsDescription.text = film.description
-        binding.detailsFabWatchLater.setOnClickListener{
-            notificationService.sendFilmnotification(film)
-        }
+
     }
 
     private fun setDownloadFAB() {
@@ -91,33 +91,26 @@ class DetailsFragment : Fragment() {
         }
     }
 
-    private fun setFavoriteIcon() {
+    private fun setFavoriteFAB() {
 
         binding.favoritesFab.setOnClickListener {
             film.isFavorite = !film.isFavorite
+
+            if (film.isFavorite) {
+                viewModel.interactor.saveFilmToFavorites(film)
+                notificationService.setFilmNotification(film)
+            } else viewModel.interactor.deleteFilmFromFavorites(film)
             setFavoriteIcon()
         }
+        setFavoriteIcon()
 
+    }
+
+    private fun setFavoriteIcon() {
         binding.favoritesFab.setImageResource(
             if (film.isFavorite) R.drawable.ic_favorite
             else R.drawable.ic_favorite_border
         )
-
-//        // changing 'add to favorites' fab icon depending on status
-//        binding.favoritesFab.setImageResource(
-//            if (film.isFavorite) R.drawable.ic_favorite
-//            else R.drawable.ic_favorite_border
-//        )
-//        // setting 'add to favorites' fab click listener
-//        binding.favoritesFab.setOnClickListener {
-//            if (!film.isFavorite) {
-//                binding.favoritesFab.setImageResource(R.drawable.ic_favorite)
-//                film.isFavorite = true
-//            } else {
-//                binding.favoritesFab.setImageResource(R.drawable.ic_favorite_border)
-//                film.isFavorite = false
-//            }
-//        }
     }
 
     private fun setShareIcon() {
@@ -241,11 +234,5 @@ class DetailsFragment : Fragment() {
             }
         }
     }
-
-//      создаем родительский скоуп с диспатчером Main потока, так как будем взаимодействовать с UI
-
-
-
-
 
 }

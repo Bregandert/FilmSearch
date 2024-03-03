@@ -1,5 +1,6 @@
 package com.bregandert.filmsearch.utils
 
+import com.bregandert.filmsearch.data.entity.FavoriteFilm
 import com.bregandert.filmsearch.data.entity.Film
 import com.bregandert.retrofit.entity.TmdbFilm
 
@@ -23,8 +24,39 @@ object Converter {
             poster = apiData.posterPath,
             description = apiData.overview,
             rating = apiData.voteAverage / 10f,
-
+            tmdbId = apiData.id,
             isFavorite = false
         )
+    }
+
+    fun filmToFavorite(film: Film): FavoriteFilm {
+        return FavoriteFilm(
+            title = film.title,
+            poster = film.poster,
+            description = film.description,
+            rating = film.rating,
+            tmdbId = film.tmdbId
+        )
+    }
+
+    fun favoriteToFilm(favoriteFilm: FavoriteFilm): Film {
+        return Film(
+            title = favoriteFilm.title,
+            poster = favoriteFilm.poster,
+            description = favoriteFilm.description,
+            rating = favoriteFilm.rating,
+            tmdbId = favoriteFilm.tmdbId,
+            isFavorite = true
+        )
+    }
+
+    fun favoriteListToFilmList(list: List<FavoriteFilm>?): List<Film> {
+        val result = mutableListOf<Film>()
+        list?.forEach{
+            try {
+                result.add(favoriteToFilm(it))
+            } catch (e: Exception) {}
+        }
+        return result
     }
 }
