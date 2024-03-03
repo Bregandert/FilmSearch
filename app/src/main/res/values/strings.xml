@@ -26,6 +26,8 @@
     <string name="open">В галерею</string>
     <string name="battery_low_toast">Battery low!</string>
     <string name="power_cable_connected_toast">Power cable connected!</string>
+    <string name="notification_title">Вы хотели посмотреть </string>
+    <string name="notification_text">"Не забудьте посмотреть фильм"</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->

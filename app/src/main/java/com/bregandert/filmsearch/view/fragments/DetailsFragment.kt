@@ -22,6 +22,7 @@ import com.bregandert.filmsearch.App
 import com.bregandert.filmsearch.R
 import com.bregandert.filmsearch.databinding.FragmentDetailsBinding
 import com.bregandert.filmsearch.data.entity.Film
+import com.bregandert.filmsearch.utils.NotificationService
 import com.bregandert.filmsearch.viewmodel.DetailsFragmentViewModel
 import com.bregandert.retrofit.entity.ApiConstants
 import com.bumptech.glide.Glide
@@ -37,6 +38,7 @@ class DetailsFragment : Fragment() {
 
     private lateinit var binding: FragmentDetailsBinding
     private lateinit var film: Film
+    private lateinit var notificationService: NotificationService
     private val scope = CoroutineScope(Dispatchers.IO)
     private val viewModel: DetailsFragmentViewModel by activityViewModels()
 
@@ -47,6 +49,8 @@ class DetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentDetailsBinding.inflate(layoutInflater)
+
+        notificationService = NotificationService(requireContext().applicationContext)
 
         film = (
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -76,6 +80,9 @@ class DetailsFragment : Fragment() {
 //        binding.detailsPoster.setImageResource(film.poster)
         //Устанавливаем описание
         binding.detailsDescription.text = film.description
+        binding.detailsFabWatchLater.setOnClickListener{
+            notificationService.sendFilmnotification(film)
+        }
     }
 
     private fun setDownloadFAB() {
