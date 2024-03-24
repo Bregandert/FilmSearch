@@ -1,6 +1,3 @@
-package com.bregandert.filmsearch.view
-
-
 import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Intent

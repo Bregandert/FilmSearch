@@ -1,16 +1,14 @@
 package com.bregandert.filmsearch.view.fragments
 
+import MainActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 
 import com.bregandert.filmsearch.view.rv_adapters.FilmListRecyclerAdapter
-import com.bregandert.filmsearch.view.MainActivity
 
 import com.bregandert.filmsearch.databinding.FragmentFavoritesBinding
 import com.bregandert.filmsearch.databinding.FilmItemBinding

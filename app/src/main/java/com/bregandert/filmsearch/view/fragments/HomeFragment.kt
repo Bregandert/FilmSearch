@@ -1,6 +1,7 @@
 package com.bregandert.filmsearch.view.fragments
 
 
+import MainActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,7 +21,6 @@ import com.bregandert.filmsearch.utils.AnimationHelper
 import com.bregandert.filmsearch.utils.AutoDisposable
 import com.bregandert.filmsearch.utils.addTo
 
-import com.bregandert.filmsearch.view.MainActivity
 import com.bregandert.filmsearch.view.rv_adapters.FilmListRecyclerAdapter
 import com.bregandert.filmsearch.view.rv_adapters.TopSpacingItemDecoration
 import com.bregandert.filmsearch.viewmodel.HomeFragmentViewModel
