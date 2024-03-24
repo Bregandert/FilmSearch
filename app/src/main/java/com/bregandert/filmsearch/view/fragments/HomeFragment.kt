@@ -151,11 +151,7 @@ class HomeFragment : Fragment() {
             FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
                 //            если кликнули фильм то запускаем фрагмент с этим фильмом
                 override fun click(film: Film, position: Int, binding: FilmItemBinding) {
-                    (requireActivity() as MainActivity).launchDetailsFragment(
-                        film,
-                        position,
-                        binding
-                    )
+                    (requireActivity() as MainActivity).launchDetailsFragment(film)
                 }
             })
 

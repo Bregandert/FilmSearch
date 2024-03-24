@@ -6,13 +6,10 @@ import com.bregandert.filmsearch.data.MainRepository
 import com.bregandert.filmsearch.data.PreferenceProvider
 
 import com.bregandert.filmsearch.utils.Converter
-import com.bregandert.retrofit.TmdbApi
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 
 // класс для взаимодействия с базой данных фильма, внешним API и настройками
 class Interactor(
@@ -22,7 +19,21 @@ class Interactor(
 ) {
 
     var progressBarState : BehaviorSubject<Boolean> = BehaviorSubject.create()
-//    val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+    private lateinit var favoritesTmbdId: List<Int>
+
+    init {
+        getFavouriteFilmFromDB()
+            .subscribeOn(Schedulers.io())
+            .map {
+                val ids: MutableList<Int> = mutableListOf<Int>()
+                it.forEach { film -> ids.add(film.tmdbId) }
+                ids
+            }
+            .subscribe {
+                favoritesTmbdId = it
+            }
+    }
+
 
 
     fun getFilmsFromApi(page: Int) {
@@ -86,12 +97,24 @@ class Interactor(
     }
 
     fun saveFilmsToDB(list: List<Film>) {
-        repo.putFilmsToDb(list)
+        list.forEach{
+            it.isFavorite = favoritesTmbdId.contains(it.tmdbId)
+        }
+        repo.saveFilmsToDb(list)
     }
 
     fun getFilmsFromDB(): Observable<List<Film>> = repo.getAllFilmsFromDB()
 
-//    fun getFavouriteFilmsFromDB(): Observable<List<Film>> = repo.getFavouriteFilmsFromDB()
+    //    Работаем с локально базой данных избранных фильмов
+    fun getFavouriteFilmFromDB(): Observable<List<Film>> = repo.getFavoriteFilmsFromDB()
+
+    fun saveFilmToFavorites(film: Film) {
+        repo.saveFilmToFavorites(film)
+    }
+
+    fun deleteFilmFromFavorites(film: Film) {
+        repo.deleteFilmFromFavorites(film)
+    }
 
 //    Взаимодействуем с дефолтным значением категории
     fun saveDefaultCategoryToPreferences(category: String) {
@@ -113,6 +136,10 @@ class Interactor(
     }
 
     fun getCategoryInDB() = preferences.getCategoryInDB()
+
+    fun isFavorite(film: Film): Observable<Boolean> {
+        return repo.isFilmInFavorites(film)
+    }
 
 
 }
