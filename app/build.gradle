@@ -22,6 +22,7 @@ room {
 android {
     namespace 'com.bregandert.filmsearch'
     compileSdk 34
+    flavorDimensions = ["version"]
 
 
 
@@ -35,7 +36,18 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-
+    productFlavors {
+        basic {
+            dimension "version"
+            applicationIdSuffix ".basic"
+            versionNameSuffix "-basic"
+        }
+        pro {
+            dimension "version"
+            applicationIdSuffix ".pro"
+            versionNameSuffix "-pro"
+        }
+    }
 
     buildTypes {
         release {
@@ -43,6 +55,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
@@ -59,6 +74,18 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+    }
+    sourceSets {
+        basic {
+            java {
+                srcDirs 'src\\basic\\java'
+            }
+        }
+        pro {
+            java {
+                srcDirs 'src\\pro\\java', 'src\\pro\\java\\com', 'src\\pro\\java\\com\\bregandert\\filmsearch\\view'
+            }
+        }
     }
 
 }

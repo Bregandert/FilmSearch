@@ -1,5 +1,6 @@
 package com.bregandert.filmsearch.utils
 
+import MainActivity
 import android.app.AlarmManager
 import android.app.DatePickerDialog
 import android.app.Notification
@@ -16,8 +17,6 @@ import androidx.core.content.ContextCompat.getSystemService
 import com.bregandert.filmsearch.App
 import com.bregandert.filmsearch.R
 import com.bregandert.filmsearch.data.entity.Film
-import com.bregandert.filmsearch.view.MainActivity
-import com.bregandert.filmsearch.view.fragments.DetailsFragment
 import java.util.Calendar
 
 class NotificationService(val context: Context) {
